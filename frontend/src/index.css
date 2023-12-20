@@ -1,11 +1,24 @@
+/* To Hide Increase Decrese UI In OTP Box */
 .spin-button-none::-webkit-outer-spin-button,
 .spin-button-none::-webkit-inner-spin-button {
   appearance: none;
 }
 
-/*For Firefox*/
+/* To Hide Increase Decrese UI In OTP Box For Firefox*/
 .spin-button-none[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* CSS Bounce IN Animation */
+.bounce-custom {
+  /* animation: bounce-custom 0.5s infinite; */
+  animation: bounce-custom 0.5s
+}
+@keyframes bounce-custom {
+  from, to { transform: scale(1, 1); }
+  25% { transform: scale(0.9, 1.1); }
+  50% { transform: scale(1.1, 0.9); }
+  75% { transform: scale(0.95, 1.05); }
 }
 
 @tailwind base;

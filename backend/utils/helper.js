@@ -22,3 +22,8 @@ exports.genrateRandomByte = () => {
     });
   });
 };
+
+//Handleing 404 Error using universal route
+exports.handleNotFound = (req, res) => {
+  this.sendError(res, "Not Found", 404);
+};

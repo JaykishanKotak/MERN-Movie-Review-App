@@ -1,11 +1,14 @@
 const express = require("express");
 
+const cors = require("cors");
+
 //For Error handling from Front-end
 require("express-async-errors");
 
 const userRouter = require("./routes/user");
 const morgan = require("morgan");
 const { errorHandler } = require("./middlewares/error");
+const { handleNotFound } = require("./utils/helper");
 
 //To use enviroment variables
 require("dotenv").config();
@@ -14,6 +17,10 @@ require("dotenv").config();
 require("./db");
 
 const app = express();
+
+//To Handel Cors Error
+app.use(cors());
+
 //To use JSON Data format
 app.use(express.json());
 
@@ -24,8 +31,10 @@ app.use(morgan("dev"));
 
 // console.log(app);
 
-app.use("/api", userRouter);
+app.use("/api/user", userRouter);
 
+//Handleing 404 Error using universal route
+app.use("/*", handleNotFound);
 //Error handling - Use it after route file or end of file
 app.use(errorHandler);
 

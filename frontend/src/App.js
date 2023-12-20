@@ -7,18 +7,29 @@ import Home from "./components/Home";
 import EmailVerification from "./components/auth/EmailVerification";
 import ForgetPassword from "./components/auth/ForgetPassword";
 import ConfirmPassword from "./components/auth/ConfirmPassword";
+import NotFound from "./components/NotFound";
 
 function App() {
   return (
     <>
       <Navbar />
+      {/*
+        <div className="fixed left-1/2 -translate-x-1/2 top-24">
+          <div className="bounce-custom shadow-md shadow-gray-400 bg-red-400 rounded">
+            <p className="text-white px-4 py-2 font-semibold">
+              Something went wrong
+            </p>
+          </div>
+        </div>
+      */}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/auth/signin" element={<Signin />} />
         <Route path="/auth/signup" element={<Signup />} />
         <Route path="/auth/verification" element={<EmailVerification />} />
         <Route path="/auth/forget-password" element={<ForgetPassword />} />
-        <Route path="/auth/confirm-password" element={<ConfirmPassword />} />
+        <Route path="/auth/reset-password" element={<ConfirmPassword />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </>
   );

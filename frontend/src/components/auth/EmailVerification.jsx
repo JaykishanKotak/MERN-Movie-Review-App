@@ -4,16 +4,43 @@ import Title from "../form/Title";
 import Submit from "../form/Submit";
 import FormContainer from "../form/FormContainer";
 import { commonModalClasses } from "../../utils/theme";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
+import { resendEmailVerificationToken, verifyUserEmail } from "../../api/auth";
+import { useAuth, useNotification } from "../../hooks";
 
 //Dynamic OTP Length
 const OTP_LENGTH = 6;
 let currentOTPIndex;
 
+const isValidOTP = (otp) => {
+  let valid = false;
+
+  for (let val of otp) {
+    //Check if otp value is int or empty
+    valid = !isNaN(parseInt(val));
+    //Break even if one value is empty or NaN Ex: [1, "", 2 , "3"]
+    if (!valid) break;
+  }
+
+  return valid;
+};
 const EmailVerification = () => {
   //Array fill with empty items of given length
   const [otp, setOtp] = useState(new Array(OTP_LENGTH).fill(""));
 
   const [activeOTPIndex, setActiveOTPIndex] = useState(0);
+
+  const { updateNotification } = useNotification();
+
+  const { isAuth, authInfo } = useAuth();
+  const { isLoggedIn, profile } = authInfo;
+  const isVerified = profile?.isVerified;
+
+  const navigate = useNavigate();
+  //To get user data from Signup state
+  const { state } = useLocation();
+  console.log(state);
+  const user = state?.user;
 
   //Ref hook to get refrance of input field of otp
   const inputRef = useRef();
@@ -65,10 +92,50 @@ const EmailVerification = () => {
     // console.log(inputRef);
   }, [activeOTPIndex]);
 
+  useEffect(() => {
+    if (!user) navigate("/not-found");
+    if (isLoggedIn && isVerified) navigate("/");
+  }, [user, isLoggedIn, isVerified]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!isValidOTP(otp)) {
+      //return console.log("Invalid OTP");
+      return updateNotification("error", "Invalid OTP");
+    }
+    console.log(otp);
+    //Submit OTP
+    const {
+      error,
+      message,
+      user: userResponse,
+    } = await verifyUserEmail({
+      //Convort Array otp to string
+      OTP: otp.join(""),
+      userId: user.id,
+    });
+    if (error) return updateNotification("error", error);
+
+    updateNotification("success", message);
+    //console.log(message);
+    //Set token inside local storage
+    localStorage.setItem("auth-token", userResponse.token);
+    isAuth();
+  };
+
+  const handleOTPResend = async () => {
+    const { error, message } = await resendEmailVerificationToken(user.id);
+
+    if (error) {
+      return updateNotification("error", error);
+    }
+    updateNotification("success", message);
+  };
   return (
     <FormContainer>
       <Container>
-        <form className={commonModalClasses}>
+        <form onSubmit={handleSubmit} className={commonModalClasses}>
           <div>
             <Title>Please Enter the OTP to verify your Account</Title>
             <p className="text-center dark:text-dark-subtle text-white-subtle">
@@ -91,7 +158,16 @@ const EmailVerification = () => {
               );
             })}
           </div>
-          <Submit value="Send Link" />
+          <div>
+            <Submit value="Verify Account" />
+            <button
+              onClick={handleOTPResend}
+              type="button"
+              className="dark:text-white text-blue-500 font-semibold hover:underline mt-2"
+            >
+              I don't have otp
+            </button>
+          </div>
         </form>
       </Container>
     </FormContainer>

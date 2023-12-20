@@ -63,10 +63,17 @@ exports.create = async (req, res) => {
   });
   //Create in Db
   await newUser.save();
+  // return res.status(201).json({
+  //   //user: newUser
+  //   message:
+  //     "Please verify your email. OTP has been sent to your email account!",
+  // });
   return res.status(201).json({
-    //user: newUser
-    message:
-      "Please verify your email. OTP has been sent to your email account!",
+    user: {
+      id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+    },
   });
   //res.send("<h1>Create User Controller.</h1>");
 };
@@ -123,7 +130,22 @@ exports.verifyEmail = async (req, res) => {
     <p>Thanks for Choosing Us !</p>
     `,
   });
-  res.status(200).json({ message: "Your Email is verified." });
+  //res.status(200).json({ message: "Your Email is verified." });
+
+  const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
+    expiresIn: "12h",
+  });
+
+  res.status(200).json({
+    user: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+      isVerified: user.isVerified,
+      token: jwtToken,
+    },
+    message: "Your email is verified.",
+  });
 };
 
 exports.resendEmailVerifiationToken = async (req, res) => {
@@ -215,7 +237,7 @@ exports.forgetPassword = async (req, res) => {
   await newPasswordResetToken.save();
 
   //Genrate Password reset link and sent to user on mail
-  const resetPasswordUrl = `localhost:3000/reset-password?token=${token}&id=${user._id}`;
+  const resetPasswordUrl = `localhost:3000/auth/reset-password?token=${token}&id=${user._id}`;
 
   const transport = genrateMailTranspoter();
 
@@ -296,14 +318,14 @@ exports.signIn = async (req, res, next) => {
     return sendError(res, "Email/Password mismatch!");
   }
 
-  const { _id, name } = user;
+  const { _id, name, isVerified } = user;
   //If email and password corrert, create a jwt token
   //Don't use any sensitive data in JWT, its just a sign and check token
-  const jwtToken = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-    expiresIn: "1h",
+  const jwtToken = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
+    expiresIn: "12h",
   });
 
-  res.json({ id: _id, name, email, token: jwtToken });
+  res.json({ user: { id: _id, name, email, isVerified, token: jwtToken } });
   // } catch (error) {
   //   //return sendError(res, error.message);
 
