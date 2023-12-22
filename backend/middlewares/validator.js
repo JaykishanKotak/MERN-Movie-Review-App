@@ -38,3 +38,18 @@ exports.signInValidator = [
   check("email").normalizeEmail().isEmail().withMessage("Email is invalid"),
   check("password").trim().not().isEmpty().withMessage("Password is missing"),
 ];
+
+//To validate actor inputs
+exports.actorInfoValidator = [
+  check("name").trim().not().isEmpty().withMessage("Actor Name is invalid"),
+  check("about")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("About is a required field"),
+  check("gender")
+    .trim()
+    .not()
+    .isEmpty()
+    .withMessage("Gender is a required field"),
+];

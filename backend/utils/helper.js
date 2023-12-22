@@ -1,4 +1,5 @@
 const crypto = require("crypto");
+const cloudinary = require("../cloud");
 
 //Dynamic Error Return function
 exports.sendError = (res, error, statusCode = 401) => {
@@ -26,4 +27,28 @@ exports.genrateRandomByte = () => {
 //Handleing 404 Error using universal route
 exports.handleNotFound = (req, res) => {
   this.sendError(res, "Not Found", 404);
+};
+
+exports.uploadImageToCloud = async (file) => {
+  const { secure_url: url, public_id } = await cloudinary.uploader.upload(
+    file,
+    {
+      gravity: "face",
+      height: 500,
+      width: 500,
+      crop: "thumb",
+    }
+  );
+  return { url, public_id };
+};
+
+exports.formatActor = (actor) => {
+  const { name, about, gender, _id, avatar } = actor;
+  return {
+    id: _id,
+    name,
+    about,
+    gender,
+    avatar: avatar?.url,
+  };
 };

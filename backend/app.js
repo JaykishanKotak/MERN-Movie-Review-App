@@ -2,16 +2,15 @@ const express = require("express");
 
 const cors = require("cors");
 
+//To use enviroment variables
+require("dotenv").config();
+
 //For Error handling from Front-end
 require("express-async-errors");
 
-const userRouter = require("./routes/user");
 const morgan = require("morgan");
 const { errorHandler } = require("./middlewares/error");
 const { handleNotFound } = require("./utils/helper");
-
-//To use enviroment variables
-require("dotenv").config();
 
 //If not provide file name index.js will considerd as default file
 require("./db");
@@ -28,10 +27,13 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 //We are Using MVC - Modal View Control Pattern Here
+const userRouter = require("./routes/user");
+const actorRouter = require("./routes/actor");
 
 // console.log(app);
 
 app.use("/api/user", userRouter);
+app.use("/api/actor", actorRouter);
 
 //Handleing 404 Error using universal route
 app.use("/*", handleNotFound);
