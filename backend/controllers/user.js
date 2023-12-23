@@ -318,14 +318,16 @@ exports.signIn = async (req, res, next) => {
     return sendError(res, "Email/Password mismatch!");
   }
 
-  const { _id, name, isVerified } = user;
+  const { _id, name, role, isVerified } = user;
   //If email and password corrert, create a jwt token
   //Don't use any sensitive data in JWT, its just a sign and check token
   const jwtToken = jwt.sign({ userId: _id }, process.env.JWT_SECRET, {
     expiresIn: "12h",
   });
 
-  res.json({ user: { id: _id, name, email, isVerified, token: jwtToken } });
+  res.json({
+    user: { id: _id, name, email, role, isVerified, token: jwtToken },
+  });
   // } catch (error) {
   //   //return sendError(res, error.message);
 

@@ -1,9 +1,12 @@
 const jwt = require("jsonwebtoken");
-const { sendErrorndError } = require("../utils/helper");
+const { sendError } = require("../utils/helper");
 const User = require("../models/user");
 
 exports.isAuth = async (req, res, next) => {
   const token = req.headers?.authorization;
+
+  if (!token) return sendError(res, "Invalid Token");
+
   const jwtToken = token.split("Bearer ")[1];
   console.log(jwtToken);
   if (!jwtToken) return sendError(res, "Invalid Token");
@@ -20,4 +23,15 @@ exports.isAuth = async (req, res, next) => {
   next();
   // console.log(jwtRes);
   // res.json(jwtRes);
+};
+
+exports.isAdmin = async (req, res, next) => {
+  //Find out user is admin or not
+
+  //Check is user is loggedin or not
+  const { user } = req;
+  if (user.role !== "admin") {
+    return sendError(res, "Unauthorized access !");
+  }
+  next();
 };
