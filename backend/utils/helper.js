@@ -52,3 +52,25 @@ exports.formatActor = (actor) => {
     avatar: avatar?.url,
   };
 };
+
+//To parse Array data
+exports.parseData = (req, res, next) => {
+  const { cast, tags, trailer, writers, genres } = req.body;
+
+  if (trailer) {
+    req.body.trailer = JSON.parse(trailer);
+  }
+  if (cast) {
+    req.body.cast = JSON.parse(cast);
+  }
+  if (tags) {
+    req.body.tags = JSON.parse(tags);
+  }
+  if (writers) {
+    req.body.writers = JSON.parse(writers);
+  }
+  if (trailer) {
+    req.body.genres = JSON.parse(genres);
+  }
+  next();
+};

@@ -29,11 +29,13 @@ app.use(morgan("dev"));
 //We are Using MVC - Modal View Control Pattern Here
 const userRouter = require("./routes/user");
 const actorRouter = require("./routes/actor");
+const movieRouter = require("./routes/movie");
 
 // console.log(app);
 
 app.use("/api/user", userRouter);
 app.use("/api/actor", actorRouter);
+app.use("/api/movie", movieRouter);
 
 //Handleing 404 Error using universal route
 app.use("/*", handleNotFound);

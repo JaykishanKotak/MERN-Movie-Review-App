@@ -1,7 +1,7 @@
 const multer = require("multer");
 const storage = multer.diskStorage({});
 
-const fileFilter = (req, file, cb) => {
+const imageFileFilter = (req, file, cb) => {
   console.log(file);
   //If Upload file is NOT Image type
   if (!file.mimetype.startsWith("image")) {
@@ -10,5 +10,17 @@ const fileFilter = (req, file, cb) => {
   cb(null, true);
 };
 
+const videoFileFilter = (req, file, cb) => {
+  console.log(file);
+  //If Upload file is NOT Image type
+  if (!file.mimetype.startsWith("video")) {
+    cb("Supported Only Video types !", false);
+  }
+  cb(null, true);
+};
+
 //For Image Uplode
-exports.uploadImage = multer({ storage, fileFilter });
+exports.uploadImage = multer({ storage, imageFileFilter });
+
+//For Video Upload
+exports.uploadVideo = multer({ storage, videoFileFilter });
