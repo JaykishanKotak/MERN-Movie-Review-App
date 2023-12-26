@@ -70,12 +70,12 @@ const Signin = () => {
   };
 
   //Check if user login alredy or not
-  useEffect(() => {
-    //Move user to home route if alredy loggedin
-    if (isLoggedIn) {
-      navigate("/");
-    }
-  }, [isLoggedIn]);
+  // useEffect(() => {
+  //   //Move user to home route if alredy loggedin
+  //   if (isLoggedIn) {
+  //     navigate("/");
+  //   }
+  // }, [isLoggedIn]);
   return (
     <FormContainer>
       <Container>

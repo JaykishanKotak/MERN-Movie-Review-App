@@ -1,6 +1,7 @@
 import React, { createContext, useEffect, useState } from "react";
 import { getIsAuth, signInUser } from "../api/auth";
 import { useNotification } from "../hooks";
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
@@ -14,6 +15,8 @@ export default function AuthProvider({ children }) {
   };
   const [authInfo, setAuthInfo] = useState({ ...defaultAuthInfo });
 
+  const navigate = useNavigate();
+
   const { updateNotification } = useNotification();
   //For Login
   const handleLogin = async (email, password) => {
@@ -23,6 +26,8 @@ export default function AuthProvider({ children }) {
       updateNotification("error", error);
       return setAuthInfo({ ...authInfo, isPending: false, error: error });
     }
+
+    navigate("/", { replace: true });
     //Update User Profile
     setAuthInfo({
       profile: { ...user },
