@@ -14,7 +14,7 @@ export class AdminNavigator extends Component {
         <Navbar />
 
         <div className="flex-1 p-2 max-w-screen-xl">
-          <Header />
+          <Header onAddMovieClick={() => console.log("Add Movie")} />
           <Routes>
             <Route path="/" element={<Dashboard />} />
             <Route path="/movies" element={<Movies />} />
