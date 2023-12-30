@@ -1,13 +1,30 @@
 import React from "react";
 import TagsInput from "../TagsInput";
+import LiveSearch from "../LiveSearch";
+import { commonInputClasses } from "../../utils/theme";
+import { fakeProfilesData } from "../../utils/fakeProfilesData";
 
-const commonInputClasses =
-  "w-full bg-transparent outline-none dark:border-dark-subtle border-light-subtle dark:focus:border-white focus:border-primary transition dark:text-white text-primary";
+const results = fakeProfilesData;
+
 const MovieForm = () => {
   //Movie form will be in 2 sections
   const handleSubmit = (e) => {
     e.preventDefault();
   };
+
+  const renderItem = (result) => {
+    return (
+      <div className="flex rounded overflow-hidden">
+        <img
+          src={result.avatar}
+          alt="avatar"
+          className="h-16 w-16 object-cover"
+        />
+        <p className="dark:text-white font-semibold">{result.name}</p>
+      </div>
+    );
+  };
+
   return (
     <form onSubmit={handleSubmit} className="flex space-x-3">
       {/*Section 1 */}
@@ -33,8 +50,16 @@ const MovieForm = () => {
         </div>
 
         <div>
-          <TagsInput />
+          <Label htmlFor="tags">Tags</Label>w
+          <TagsInput name="tags" />
         </div>
+
+        <LiveSearch
+          results={results}
+          placeholder="Search Profiles..."
+          renderItem={renderItem}
+          onSelect={(result) => console.log(result)}
+        />
       </div>
 
       {/*Section 2 */}
