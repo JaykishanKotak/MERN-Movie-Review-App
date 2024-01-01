@@ -39,15 +39,23 @@ const LiveSearch = ({
       nextCount = (focusedIndex + results.length - 1) % results.length;
     }
 
+    if (key == "Escape") {
+      return closeSearch();
+    }
+
     if (key == "Enter") {
       return handleSelection(results[focusedIndex]);
     }
+
     setFocusedIndex(nextCount);
   };
 
   const handleSelection = (selectedItem) => {
     // console.log(selectedItem);
-    onSelect(selectedItem);
+    if (selectedItem) {
+      onSelect(selectedItem);
+      closeSearch();
+    }
   };
 
   const closeSearch = () => {
