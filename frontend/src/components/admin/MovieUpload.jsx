@@ -51,7 +51,7 @@ const MovieUpload = () => {
   return (
     <div className="fixed inset-0 dark:bg-white dark:bg-opacity-50 bg-primary bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
       {/* syntex to use custom value in tailwind css h-[40rem]*/}
-      <div className="dark:bg-primary bg-white rounded w-[45rem] h-[40rem] overflow-auto p-2">
+      <div className="dark:bg-primary bg-white rounded w-[45rem] h-[40rem] overflow-auto custom-scroll-bar p-2">
         {/*<UploadProgress
           visible={!videoUploaded && videoSelected}
           message={getUploadProgressValue()}

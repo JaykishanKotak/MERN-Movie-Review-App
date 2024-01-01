@@ -7,6 +7,7 @@ const LiveSearch = ({
   value = "",
   placeholder = "",
   results = [],
+  name = "",
   resultContainerStyle,
   selectedResultStyle,
   inputStyle,
@@ -73,6 +74,8 @@ const LiveSearch = ({
     >
       <input
         type="text"
+        id={name}
+        name={name}
         className={getInputStyle()}
         // placeholder="Search Profile"
         onFocus={handleOnFocus}
@@ -122,12 +125,13 @@ const SearchResults = ({
   };
   if (!visible) return null;
   return (
-    <div className="absolute right-0 left-0 top-10 dark:bg-secondary bg-white shadow-md p-2 max-h-64 space-y-2 mt-1 overflow-auto custom-scroll-bar">
+    <div className="absolute z-50 right-0 left-0 top-10 dark:bg-secondary bg-white shadow-md p-2 max-h-64 space-y-2 mt-1 overflow-auto custom-scroll-bar">
       {results.map((result, index) => {
         const { id, name, avatar } = result;
         return (
           <ResultCard
-            key={result.id}
+            //key={result.id}
+            key={index.toString()}
             ref={index === focusedIndex ? resultContainer : null}
             item={result}
             renderItem={renderItem}
