@@ -9,6 +9,15 @@ import ModalContainer from "../Modals/ModalContainer";
 import WritersModal from "../Modals/WritersModal";
 import CastForm from "../form/CastForm";
 import CastModal from "../Modals/CastModal";
+import PosterSelector from "../PosterSelector";
+import GenresSelector from "../GenresSelector";
+import GenresModal from "../Modals/GenresModal";
+import Selector from "../Selector";
+import {
+  languageOptions,
+  statusOptions,
+  typeOptions,
+} from "../../utils/options";
 
 export const renderItem = (result) => {
   return (
@@ -51,15 +60,39 @@ const MovieForm = () => {
 
   const [showCastModal, setShowCastModal] = useState(false);
 
+  const [showGenresModal, setShowGenresModal] = useState(false);
+
+  const [seletedPosterForUI, setSeletedPosterForUI] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(movieInfo);
   };
 
-  const { title, storyLine, director, writers, cast } = movieInfo;
+  const {
+    title,
+    storyLine,
+    director,
+    writers,
+    cast,
+    tags,
+    genres,
+    type,
+    language,
+    status,
+  } = movieInfo;
 
+  const updatePosterForUI = (file) => {
+    const url = URL.createObjectURL(file);
+    setSeletedPosterForUI(url);
+  };
   const handleChange = ({ target }) => {
-    const { value, name } = target;
+    const { value, name, files } = target;
+    if (name === "poster") {
+      const poster = files[0];
+      updatePosterForUI(poster);
+      return setMovieInfo({ ...movieInfo, poster });
+    }
     setMovieInfo({ ...movieInfo, [name]: value });
   };
 
@@ -92,6 +125,14 @@ const MovieForm = () => {
     setShowWritersModal(false);
   };
 
+  const displayGenresModal = () => {
+    setShowGenresModal(true);
+  };
+
+  const hideGenresModal = () => {
+    setShowGenresModal(false);
+  };
+
   const handleWriterRemove = (profileId) => {
     const { writers } = movieInfo;
     //Exclude removed profile id from writersw
@@ -106,6 +147,10 @@ const MovieForm = () => {
     const { cast } = movieInfo;
 
     setMovieInfo({ ...movieInfo, cast: [...cast, castInfo] });
+  };
+
+  const updateGenres = (genres) => {
+    setMovieInfo({ ...movieInfo, genres });
   };
 
   const displayCastModal = () => {
@@ -130,7 +175,7 @@ const MovieForm = () => {
     <Fragment>
       <div className="flex space-x-3">
         {/*Section 1 */}
-        <div className="w-[70%] h-5 space-y-5">
+        <div className="w-[70%] space-y-5">
           <div>
             {/*w-full bg-transparent outline-none dark:border-dark-subtle border-light-subtle dark:focus:border-white focus:border-primary transition dark:text-white text-primary*/}
             <Label htmlFor="title">Title</Label>
@@ -161,7 +206,7 @@ const MovieForm = () => {
 
           <div>
             <Label htmlFor="tags">Tags</Label>
-            <TagsInput name="tags" onChange={updateTags} />
+            <TagsInput value={tags} name="tags" onChange={updateTags} />
           </div>
 
           <div>
@@ -210,11 +255,47 @@ const MovieForm = () => {
             <CastForm onSubmit={updateCast} />
           </div>
 
+          <input
+            type="date"
+            name="releseDate"
+            className={commonInputClasses + " border-2 rounded p-1 w-auto"}
+            onChange={handleChange}
+          />
           <Submit type="button" onClick={handleSubmit} value="Upload" />
         </div>
 
         {/*Section 2 */}
-        <div className="w-[30%] h-5 bg-blue-400"></div>
+        <div className="w-[30%] space-y-5">
+          <PosterSelector
+            name="poster"
+            onChange={handleChange}
+            selectedPoster={seletedPosterForUI}
+            accept="image/jpeg, image/jpg, image/png"
+          />
+          <GenresSelector badge={genres.length} onClick={displayGenresModal} />
+
+          <Selector
+            onChange={handleChange}
+            name="type"
+            label="Type"
+            value={type}
+            options={typeOptions}
+          />
+          <Selector
+            onChange={handleChange}
+            name="language"
+            label="Language"
+            value={language}
+            options={languageOptions}
+          />
+          <Selector
+            onChange={handleChange}
+            name="status"
+            label="Status"
+            value={status}
+            options={statusOptions}
+          />
+        </div>
       </div>
       {/*<ModalContainer onClose={() => setShowWritersModal(false)} visible={showModal}>
         <div className="p-20 bg-red-200"></div>
@@ -232,6 +313,13 @@ const MovieForm = () => {
         onRemoveClick={handleCastRemove}
         onClose={hideCastModal}
         visible={showCastModal}
+      />
+
+      <GenresModal
+        visible={showGenresModal}
+        onClose={hideGenresModal}
+        onSubmit={updateGenres}
+        previousSelection={genres}
       />
     </Fragment>
   );

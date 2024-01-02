@@ -9,7 +9,11 @@ const ModalContainer = ({ children, visible, onClose, ignoreContainer }) => {
 
   const renderChildren = () => {
     if (ignoreContainer) return children;
-    return <div>{children}</div>;
+    return (
+      <div className="dark:bg-primary bg-white rounded w-[45rem] h-[40rem] overflow-auto p-2 custom-scroll-bar">
+        {children}
+      </div>
+    );
   };
 
   if (!visible) return null;

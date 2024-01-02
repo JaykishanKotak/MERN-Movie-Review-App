@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { AiOutlineClose } from "react-icons/ai";
 
-const TagsInput = ({ name, onChange }) => {
+const TagsInput = ({ name, onChange, value }) => {
   const [tag, setTag] = useState("");
   const [tags, setTags] = useState([]);
 
@@ -25,6 +25,10 @@ const TagsInput = ({ name, onChange }) => {
   useEffect(() => {
     onChange(tags);
   }, [tags]);
+
+  useEffect(() => {
+    if (value.length) setTags(value);
+  }, [value]);
 
   const handleKeyDown = ({ key }) => {
     // console.log(key);
