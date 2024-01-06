@@ -4,8 +4,9 @@ import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNotification } from "../../hooks";
 import { uploadTrailer } from "../../api/movie";
 import MovieForm from "./MovieForm";
+import ModalContainer from "../Modals/ModalContainer";
 
-const MovieUpload = () => {
+const MovieUpload = ({ visible, onClose }) => {
   const { updateNotification } = useNotification();
   const [uploadProgress, setUploadProgress] = useState(0);
 
@@ -48,23 +49,13 @@ const MovieUpload = () => {
     }
     return `Upload Progress ${uploadProgress}%...`;
   };
+
+  // syntex to use custom value in tailwind css h-[40rem]
+
   return (
-    <div className="fixed inset-0 dark:bg-white dark:bg-opacity-50 bg-primary bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
-      {/* syntex to use custom value in tailwind css h-[40rem]*/}
-      <div className="dark:bg-primary bg-white rounded w-[45rem] h-[40rem] overflow-auto custom-scroll-bar p-2">
-        {/*<UploadProgress
-          visible={!videoUploaded && videoSelected}
-          message={getUploadProgressValue()}
-          width={uploadProgress}
-        />
-        <TrailerSelector
-          visible={!videoSelected}
-          onTypeError={handleTypeError}
-          handleChange={handleChange}
-        />*/}
-        <MovieForm />
-      </div>
-    </div>
+    <ModalContainer visible={visible} onClose={onClose}>
+      <MovieForm />
+    </ModalContainer>
   );
 };
 
@@ -109,3 +100,22 @@ const UploadProgress = ({ message, width, visible }) => {
     </div>
   );
 };
+
+/* 
+Old Code for Refrance
+    <div className="fixed inset-0 dark:bg-white dark:bg-opacity-50 bg-primary bg-opacity-50 backdrop-blur-sm flex items-center justify-center">
+      <div className="dark:bg-primary bg-white rounded w-[45rem] h-[40rem] overflow-auto custom-scroll-bar p-2">
+        <UploadProgress
+          visible={!videoUploaded && videoSelected}
+          message={getUploadProgressValue()}
+          width={uploadProgress}
+        />
+        <TrailerSelector
+          visible={!videoSelected}
+          onTypeError={handleTypeError}
+          handleChange={handleChange}
+        />
+        <MovieForm />
+      </div>
+    </div>
+*/

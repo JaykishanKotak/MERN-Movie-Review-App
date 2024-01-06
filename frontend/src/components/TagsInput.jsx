@@ -11,7 +11,8 @@ const TagsInput = ({ name, onChange, value }) => {
 
   useEffect(() => {
     //Scroll Ref :- https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollIntoView
-    input.current.scrollIntoView();
+    //False will not allow form to move bottom automically when user click on Add Movie
+    input.current.scrollIntoView(false);
   }, [tag]);
 
   const handleOnChange = ({ target }) => {

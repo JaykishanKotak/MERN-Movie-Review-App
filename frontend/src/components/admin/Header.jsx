@@ -83,7 +83,13 @@ const CreateOptions = ({ options, visible, onClose }) => {
       document.removeEventListener("click", handleClose);
     };
   }, [visible]);
+
+  const handleClick = (fn) => {
+    fn();
+    onClose();
+  };
   if (!visible) return null;
+
   return (
     <div
       id={containerID}
@@ -92,7 +98,11 @@ const CreateOptions = ({ options, visible, onClose }) => {
       onAnimationEnd={handleAnimationEnd}
     >
       {options.map(({ title, onClick }) => {
-        return <Option onClick={onClick}>{title}</Option>;
+        return (
+          <Option key={title} onClick={() => handleClick(onClick)}>
+            {title}
+          </Option>
+        );
       })}
     </div>
   );

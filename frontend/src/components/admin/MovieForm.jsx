@@ -86,6 +86,7 @@ const MovieForm = () => {
     const url = URL.createObjectURL(file);
     setSeletedPosterForUI(url);
   };
+
   const handleChange = ({ target }) => {
     const { value, name, files } = target;
     if (name === "poster") {
@@ -271,6 +272,7 @@ const MovieForm = () => {
             onChange={handleChange}
             selectedPoster={seletedPosterForUI}
             accept="image/jpeg, image/jpg, image/png"
+            label="Select Poster"
           />
           <GenresSelector badge={genres.length} onClick={displayGenresModal} />
 
