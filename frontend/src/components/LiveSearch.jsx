@@ -14,6 +14,7 @@ const LiveSearch = ({
   renderItem = null,
   onChange = null,
   onSelect = null,
+  visible,
 }) => {
   const [displaySearch, setDisplaySearch] = useState(false);
   const [focusedIndex, setFocusedIndex] = useState(-1);
@@ -75,15 +76,22 @@ const LiveSearch = ({
   };
 
   useEffect(() => {
-    if (value) {
-      setDefaultValue(value);
-    }
+    // if(value) setDefaultValue(value);
+    setDefaultValue(value);
   }, [value]);
 
   const handleChange = (e) => {
     setDefaultValue(e.target.value);
     onChange && onChange(e);
   };
+
+  useEffect(() => {
+    if (results.length) {
+      return setDisplaySearch(true);
+    }
+    setDisplaySearch(false);
+  }, [results.length]);
+
   return (
     <div
       className="relative outline-none"

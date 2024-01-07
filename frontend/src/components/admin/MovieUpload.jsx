@@ -53,7 +53,7 @@ const MovieUpload = ({ visible, onClose }) => {
   // syntex to use custom value in tailwind css h-[40rem]
 
   return (
-    <ModalContainer visible={visible} onClose={onClose}>
+    <ModalContainer visible={visible}>
       <MovieForm />
     </ModalContainer>
   );

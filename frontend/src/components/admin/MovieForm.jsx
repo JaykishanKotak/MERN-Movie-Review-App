@@ -4,7 +4,7 @@ import LiveSearch from "../LiveSearch";
 import { commonInputClasses } from "../../utils/theme";
 import { fakeProfilesData } from "../../utils/fakeProfilesData";
 import Submit from "../form/Submit";
-import { useNotification } from "../../hooks";
+import { useNotification, useSearch } from "../../hooks";
 import ModalContainer from "../Modals/ModalContainer";
 import WritersModal from "../Modals/WritersModal";
 import CastForm from "../form/CastForm";
@@ -18,21 +18,12 @@ import {
   statusOptions,
   typeOptions,
 } from "../../utils/options";
-
-export const renderItem = (result) => {
-  return (
-    <div key={result.id} className="flex rounded overflow-hidden">
-      <img
-        src={result.avatar}
-        alt={result.name}
-        className="h-16 w-16 object-cover"
-      />
-      <p className="dark:text-white font-semibold">{result.name}</p>
-    </div>
-  );
-};
-
-const results = fakeProfilesData;
+import DirectorSelector from "../DirectorSelector";
+import Label from "../Label";
+import WriterSelector from "../WriterSelector";
+import ViewAllButton from "../ViewAllButton";
+import LabelWithBadge from "../LabelWithBadge";
+// const results = fakeProfilesData;
 
 const defaultMovieInfo = {
   title: "",
@@ -72,7 +63,6 @@ const MovieForm = () => {
   const {
     title,
     storyLine,
-    director,
     writers,
     cast,
     tags,
@@ -94,6 +84,7 @@ const MovieForm = () => {
       updatePosterForUI(poster);
       return setMovieInfo({ ...movieInfo, poster });
     }
+
     setMovieInfo({ ...movieInfo, [name]: value });
   };
 
@@ -172,6 +163,22 @@ const MovieForm = () => {
     setMovieInfo({ ...movieInfo, cast: [...newCast] });
   };
 
+  // const handleProfileChange = ({ target }) => {
+  //   console.log(target.value);
+  //   const { name, value } = target;
+  //   if (name === "director") {
+  //     //We need to pass method as well as query in handle search
+  //     setMovieInfo({ ...movieInfo, director: { name: value } });
+
+  //     //Pass director search state updaterFun to update only directors results
+  //     handleSearch(searchActor, value, setDirectorsProfille);
+  //   }
+  //   if (name == "writers") {
+  //     setWriterName(value);
+  //     handleSearch(searchActor, value, setWritersProfille);
+  //   }
+  // };
+
   return (
     <Fragment>
       <div className="flex space-x-3">
@@ -210,17 +217,7 @@ const MovieForm = () => {
             <TagsInput value={tags} name="tags" onChange={updateTags} />
           </div>
 
-          <div>
-            <Label htmlFor="director">Director</Label>
-            <LiveSearch
-              name="director"
-              value={director.name}
-              results={results}
-              placeholder="Search Profiles..."
-              renderItem={renderItem}
-              onSelect={updateDirector}
-            />
-          </div>
+          <DirectorSelector onSelect={updateDirector} />
 
           <div>
             <div className="flex justify-between">
@@ -234,14 +231,7 @@ const MovieForm = () => {
                 View All
               </ViewAllButton>
             </div>
-            <LiveSearch
-              name="writers"
-              // value={director.name}
-              results={results}
-              placeholder="Search Profiles..."
-              renderItem={renderItem}
-              onSelect={updateWriters}
-            />
+            <WriterSelector onSelect={updateWriters} />
           </div>
 
           <div>
@@ -328,45 +318,3 @@ const MovieForm = () => {
 };
 
 export default MovieForm;
-
-const Label = ({ children, htmlFor }) => {
-  return (
-    <label
-      className="dark:text-dark-subtle text-light-subtle font-semibold"
-      htmlFor={htmlFor}
-    >
-      {children}
-    </label>
-  );
-};
-
-const LabelWithBadge = ({ children, htmlFor, badge = 0 }) => {
-  const renderBadge = () => {
-    if (!badge) return null;
-    return (
-      <span className="dark:bg-dark-subtle bg-light-subtle text-white absolute top-0 right-0 translate-x-2 -translate-y-1 text-xs w-5 h-5 rounded-full flex justify-center items-center">
-        {badge <= 9 ? badge : "9+"}
-      </span>
-    );
-  };
-  return (
-    <div className="relative">
-      <Label htmlFor={htmlFor}>{children}</Label>
-      {renderBadge()}
-    </div>
-  );
-};
-
-//Spicfy the type of button in case of multiple buttons in single form
-const ViewAllButton = ({ visible, children, onClick }) => {
-  if (!visible) return null;
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="dark:text-white text-primary hover:underline transition"
-    >
-      {children}
-    </button>
-  );
-};

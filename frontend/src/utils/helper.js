@@ -14,3 +14,16 @@ export const catchError = (error) => {
 
   return { error: error.message || error };
 };
+
+export const renderItem = (result) => {
+  return (
+    <div key={result.id} className="flex rounded overflow-hidden">
+      <img
+        src={result.avatar}
+        alt={result.name}
+        className="h-16 w-16 object-cover"
+      />
+      <p className="dark:text-white font-semibold">{result.name}</p>
+    </div>
+  );
+};

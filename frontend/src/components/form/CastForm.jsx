@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import LiveSearch from "../LiveSearch";
 import { commonInputClasses } from "../../utils/theme";
-import { fakeProfilesData } from "../../utils/fakeProfilesData";
-import { renderItem } from "../admin/MovieForm";
-import { useNotification } from "../../hooks";
+import { renderItem } from "../../utils/helper";
+import { useNotification, useSearch } from "../../hooks";
+import { searchActor } from "../../api/actor";
 
 //const cast = [{ actor : id, roleAs : "", leadActor : true}]
 
-const results = fakeProfilesData;
+// const results = fakeProfilesData;
 
 const defaultCastInfo = {
   profile: {},
@@ -16,9 +16,12 @@ const defaultCastInfo = {
 };
 const CastForm = ({ onSubmit }) => {
   const { updateNotification } = useNotification();
+  const { handleSearch, searching, results, resetSearch } = useSearch();
 
   const [castInfo, setCastInfo] = useState(defaultCastInfo);
   const { leadActor, profile, roleAs } = castInfo;
+
+  const [profiles, setProfiles] = useState([]);
 
   const handleOnChange = ({ target }) => {
     const { checked, name, value } = target;
@@ -42,7 +45,17 @@ const CastForm = ({ onSubmit }) => {
       return updateNotification("error", "Cast Role is missing !");
     }
     onSubmit(castInfo);
-    setCastInfo({ ...defaultCastInfo });
+    setCastInfo({ ...defaultCastInfo, profile: { name: "" } });
+    resetSearch();
+    setProfiles([]);
+  };
+
+  const handleProfileChange = ({ target }) => {
+    const { value } = target;
+    const { profile } = castInfo;
+    profile.name = value;
+    setCastInfo({ ...castInfo, ...profile });
+    handleSearch(searchActor, value, setProfiles);
   };
 
   return (
@@ -59,9 +72,10 @@ const CastForm = ({ onSubmit }) => {
       <LiveSearch
         placeholder="Search Profile"
         value={profile.name}
-        results={results}
+        results={profiles}
         onSelect={handleProfileSelect}
         renderItem={renderItem}
+        onChange={handleProfileChange}
       />
       <span className="dark:text-dark-subtle text-light-subtle font-semibold">
         as
