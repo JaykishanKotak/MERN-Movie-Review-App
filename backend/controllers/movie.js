@@ -83,38 +83,40 @@ exports.createMovie = async (req, res) => {
     ex : '1280 * 720', '640 * 360', '320 * 180'
     ref : https://cloudinary.com/documentation/responsive_html
   */
-  const {
-    secure_url: url,
-    public_id,
-    responsive_breakpoints,
-  } = await cloudinary.uploader.upload(file.path, {
-    transformation: {
-      width: 1280,
-      height: 720,
-    },
-    responsive_breakpoints: {
-      create_derived: true,
-      max_width: 640,
-      max_images: 3,
-    },
-  });
-  console.log(responsive_breakpoints[0].breakpoints);
+  //Poster is optional field
+  if (file) {
+    const {
+      secure_url: url,
+      public_id,
+      responsive_breakpoints,
+    } = await cloudinary.uploader.upload(file.path, {
+      transformation: {
+        width: 1280,
+        height: 720,
+      },
+      responsive_breakpoints: {
+        create_derived: true,
+        max_width: 640,
+        max_images: 3,
+      },
+    });
+    console.log(responsive_breakpoints[0].breakpoints);
 
-  const finalPoster = {
-    url,
-    public_id,
-    responsive: [],
-  };
+    const finalPoster = {
+      url,
+      public_id,
+      responsive: [],
+    };
 
-  const { breakpoints } = responsive_breakpoints[0];
-  if (breakpoints.length) {
-    for (let imgObj of breakpoints) {
-      const { secure_url } = imgObj;
-      finalPoster.responsive.push(secure_url);
+    const { breakpoints } = responsive_breakpoints[0];
+    if (breakpoints.length) {
+      for (let imgObj of breakpoints) {
+        const { secure_url } = imgObj;
+        finalPoster.responsive.push(secure_url);
+      }
     }
+    newMovie.poster = finalPoster;
   }
-
-  newMovie.poster = finalPoster;
 
   await newMovie.save();
   res.status(201).json({ id: newMovie._id, title });

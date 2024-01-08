@@ -23,6 +23,7 @@ import Label from "../Label";
 import WriterSelector from "../WriterSelector";
 import ViewAllButton from "../ViewAllButton";
 import LabelWithBadge from "../LabelWithBadge";
+import { validateMovie } from "../../utils/validator";
 // const results = fakeProfilesData;
 
 const defaultMovieInfo = {
@@ -39,7 +40,8 @@ const defaultMovieInfo = {
   language: "",
   status: "",
 };
-const MovieForm = () => {
+
+const MovieForm = ({ onSubmit, busy }) => {
   //Movie form will be in 2 sections
 
   const { updateNotification } = useNotification();
@@ -57,7 +59,56 @@ const MovieForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log(movieInfo);
+    const { error } = validateMovie(movieInfo);
+    if (error) return updateNotification("error", error);
+    const { tags, genres, cast, writers, director, poster } = movieInfo;
+
+    //cast tags genres writer
+    const formData = new FormData();
+    const finalMovieInfo = { ...movieInfo };
+    finalMovieInfo.tags = JSON.stringify(tags);
+    finalMovieInfo.genres = JSON.stringify(genres);
+
+    //We only need ids of cast
+    /*
+    cast: [
+      {
+        actor: {
+          type: mongoose.Schema.Types.ObjectId,
+          ref: "Actor",
+        },
+        roleAs: { type: String },
+        leadActor: { type: Boolean },
+      },
+    ],
+    */
+    const finalCast = cast.map((c) => ({
+      actor: c.profile.id,
+      roalAs: c.roalAs,
+      leadActor: c.leadActor,
+    }));
+    finalMovieInfo.cast = JSON.stringify(finalCast);
+
+    //Writer is optional field
+    if (writers.length) {
+      //We only need ids of writers
+      const finalWriters = writers.map((w) => w.id);
+      finalMovieInfo.writers = JSON.stringify(finalWriters);
+    }
+
+    if (director.id) {
+      //We only need ids of director
+      finalMovieInfo.director = director.id;
+    }
+
+    if (poster) {
+      finalMovieInfo.poster = poster;
+    }
+
+    for (let key in finalMovieInfo) {
+      formData.append(key, finalMovieInfo[key]);
+    }
+    onSubmit(formData);
   };
 
   const {
@@ -252,7 +303,12 @@ const MovieForm = () => {
             className={commonInputClasses + " border-2 rounded p-1 w-auto"}
             onChange={handleChange}
           />
-          <Submit type="button" onClick={handleSubmit} value="Upload" />
+          <Submit
+            busy={busy}
+            type="button"
+            onClick={handleSubmit}
+            value="Upload"
+          />
         </div>
 
         {/*Section 2 */}

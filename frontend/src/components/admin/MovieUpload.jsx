@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { FileUploader } from "react-drag-drop-files";
 import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNotification } from "../../hooks";
-import { uploadTrailer } from "../../api/movie";
+import { uploadMovie, uploadTrailer } from "../../api/movie";
 import MovieForm from "./MovieForm";
 import ModalContainer from "../Modals/ModalContainer";
 
@@ -11,6 +11,8 @@ const MovieUpload = ({ visible, onClose }) => {
   const [uploadProgress, setUploadProgress] = useState(0);
 
   const [videoInfo, setVideoInfo] = useState({});
+
+  const [busy, setBusy] = useState(false);
 
   const handleUploadTrailer = async (data) => {
     //Process will be handled in background
@@ -50,11 +52,44 @@ const MovieUpload = ({ visible, onClose }) => {
     return `Upload Progress ${uploadProgress}%...`;
   };
 
-  // syntex to use custom value in tailwind css h-[40rem]
+  const handleSubmit = async (data) => {
+    setBusy(true);
+    //Info - formData will not visible inside console
+    console.log("movieInfo", data);
 
+    //For Trailer
+    if (!videoInfo.url || !videoInfo.public_id) {
+      return updateNotification("error", "Trailer info is missing !");
+    }
+
+    //Attach trailer with movieInfo
+    data.append("trailer", JSON.stringify(videoInfo));
+    const res = await uploadMovie(data);
+    setBusy(false);
+    console.log(res);
+    onClose();
+  };
+  // syntex to use custom value in tailwind css h-[40rem]
   return (
     <ModalContainer visible={visible}>
-      <MovieForm />
+      <div className="mb-5">
+        {" "}
+        <UploadProgress
+          visible={!videoUploaded && videoSelected}
+          message={getUploadProgressValue()}
+          width={uploadProgress}
+        />
+      </div>
+
+      {!videoSelected ? (
+        <TrailerSelector
+          visible={!videoSelected}
+          onTypeError={handleTypeError}
+          handleChange={handleChange}
+        />
+      ) : (
+        <MovieForm busy={busy} onSubmit={!busy ? handleSubmit : null} />
+      )}
     </ModalContainer>
   );
 };

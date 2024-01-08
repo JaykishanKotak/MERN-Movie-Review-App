@@ -106,7 +106,7 @@ const ActorForm = ({ title, btnTitle, busy, onSubmit }) => {
           accept="image/jpeg, image/jpg, image/png"
           label="Select Avatar"
         />
-        <div className="flex flex-grow flex-col spacew-y-2">
+        <div className="flex flex-grow flex-col space-y-2">
           <input
             placeholder="Enter Name"
             className={commonInputClasses + " border-b-2"}
