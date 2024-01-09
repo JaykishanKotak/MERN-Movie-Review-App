@@ -7,6 +7,7 @@ const {
   updateMoviewWithoutPoster,
   updateMoviewWithPoster,
   removeMovie,
+  getMovies,
 } = require("../controllers/movie");
 const { parseData } = require("../utils/helper");
 const { validateMovie, validate } = require("../middlewares/validator");
@@ -61,4 +62,8 @@ router.patch(
 
 //delete a movie
 router.delete("/:movieId", isAuth, isAdmin, removeMovie);
+
+//Get admin movies - admin can fetch private as well as public movies
+router.get("/movies", isAuth, isAdmin, getMovies);
+
 module.exports = router;

@@ -84,7 +84,7 @@ const MovieForm = ({ onSubmit, busy }) => {
     */
     const finalCast = cast.map((c) => ({
       actor: c.profile.id,
-      roalAs: c.roalAs,
+      roleAs: c.roleAs,
       leadActor: c.leadActor,
     }));
     finalMovieInfo.cast = JSON.stringify(finalCast);

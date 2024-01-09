@@ -6,6 +6,7 @@ const {
   searchActor,
   getLatestActors,
   getSingleActor,
+  getActors,
 } = require("../controllers/actor");
 const { uploadImage } = require("../middlewares/multer");
 const { actorInfoValidator, validate } = require("../middlewares/validator");
@@ -41,8 +42,11 @@ router.delete("/:actorId", isAuth, isAdmin, removeActor);
 //Search actor
 router.get("/search", isAuth, isAdmin, searchActor);
 
-//Get leatest actors
+//Get leatest actors -  no longer in use
 router.get("/latest-uploads", isAuth, isAdmin, getLatestActors);
+
+//Get leatest actors
+router.get("/actors", isAuth, isAdmin, getActors);
 
 //Get single actor
 router.get("/single/:id", getSingleActor);

@@ -141,3 +141,44 @@ exports.getSingleActor = async (req, res) => {
   }
   res.json(formatActor(actor));
 };
+
+exports.getActors = async (req, res) => {
+  /*
+  ============================ Pagination Logic ============================
+
+    actorsInDb = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,........,97,98,99,100]
+    newSelection = [1,2,3,,4,5]
+    newSelectionNext = [6,7,8,9,10]
+
+    pageNo = 0
+    limit/ quantity = 5
+    skip = pageNo * limiy = 0 * 5 = 0 Index skips 
+
+    pageNo = 1
+    limit/ quantity = 5
+    skip = pageNo * limiy = 1 * 5 = 5 Index skips
+
+    pageNo = 2
+    limit/ quantity = 5
+    skip = pageNo * limiy = 2 * 5 = 10 Index skips
+  */
+
+  //To avoide errors we're passing default valuse to paegNo and limit params
+  const { pageNo = 0, limit = 20 } = req.query;
+
+  /**
+   Step 1 Find actor,
+   Step 2 Sort Newly Created Actors,
+   Step 3 Skip the previous records - if zero it skips zero iteams,
+   Step 4 Select with Limit.
+   */
+  const actors = await Actor.find({})
+    .sort({
+      createdAt: -1,
+    })
+    .skip(parseInt(pageNo) * parseInt(limit))
+    .limit(parseInt(limit));
+
+  const profiles = actors.map((actor) => formatActor(actor));
+  res.json({ profiles });
+};
