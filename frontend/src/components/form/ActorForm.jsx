@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { commonInputClasses } from "../../utils/theme";
 import PosterSelector from "../PosterSelector";
 import Selector from "../Selector";
@@ -34,7 +34,7 @@ const validateActor = ({ avatar, name, about, gender }) => {
   }
   return { error: null };
 };
-const ActorForm = ({ title, btnTitle, busy, onSubmit }) => {
+const ActorForm = ({ title, btnTitle, busy, onSubmit, initialState }) => {
   const [actorInfo, setActorInfo] = useState({ ...defaultActorInfo });
 
   const [selectedAvatarForUI, setSelectedAvatarForUI] = useState("");
@@ -73,6 +73,14 @@ const ActorForm = ({ title, btnTitle, busy, onSubmit }) => {
     onSubmit(formData);
   };
   const { name, about, gender } = actorInfo;
+
+  //For Update Actors
+  useEffect(() => {
+    if (initialState) {
+      setActorInfo({ ...initialState, avatar: null });
+      setSelectedAvatarForUI(initialState.avatar);
+    }
+  }, [initialState]);
   return (
     <form
       onSubmit={handleSubmit}
@@ -121,17 +129,17 @@ const ActorForm = ({ title, btnTitle, busy, onSubmit }) => {
             onChange={handleChange}
             value={about}
           />
-          <div className="mt-3">
-            {" "}
-            <Selector
-              options={genderOptions}
-              label="Gender"
-              value={gender}
-              onChange={handleChange}
-              name="gender"
-            />
-          </div>
         </div>
+      </div>
+      <div className="mt-3">
+        {" "}
+        <Selector
+          options={genderOptions}
+          label="Gender"
+          value={gender}
+          onChange={handleChange}
+          name="gender"
+        />
       </div>
     </form>
   );

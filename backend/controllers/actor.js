@@ -71,7 +71,7 @@ exports.updateActor = async (req, res) => {
 
   await actor.save();
 
-  res.status(201).json(formatActor(actor));
+  res.status(201).json({ actor: formatActor(actor) });
 };
 
 exports.removeActor = async (req, res) => {
@@ -103,12 +103,24 @@ exports.removeActor = async (req, res) => {
 };
 
 exports.searchActor = async (req, res) => {
-  const { query } = req;
+  // const { query } = req;
+
+  const { name } = req.query;
   /*
   For Exect search Results - > { $search: `"${query.name}"` }
   For Matching search Results -> { $search: query.name }
   */
-  const result = await Actor.find({ $text: { $search: `"${query.name}"` } });
+
+  //Old Search Logic
+  // const result = await Actor.find({ $text: { $search: `"${query.name}"` } });
+
+  //options : "i" to ignore captial or small chars
+  if (!name.trim()) {
+    return sendError(res, "Invalid Request !");
+  }
+  const result = await Actor.find({
+    name: { $regex: name, $options: "i" },
+  });
 
   const actors = result.map((actor) => formatActor(actor));
 
