@@ -18,7 +18,7 @@ const ConfirmModal = ({
 
         <div className="flex items-center space-x-3 mt-3 rounded">
           {busy ? (
-            <p className="flex items-center space-x-2">
+            <p className="flex items-center space-x-2 dark:text-white text-primary">
               <ImSpinner3 className="animate-spin" />
               <span>Please wait...</span>
             </p>

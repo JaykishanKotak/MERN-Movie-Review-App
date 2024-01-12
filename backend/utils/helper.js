@@ -69,7 +69,7 @@ exports.parseData = (req, res, next) => {
   if (writers) {
     req.body.writers = JSON.parse(writers);
   }
-  if (trailer) {
+  if (genres) {
     req.body.genres = JSON.parse(genres);
   }
   next();

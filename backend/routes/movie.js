@@ -8,9 +8,15 @@ const {
   updateMoviewWithPoster,
   removeMovie,
   getMovies,
+  getMovieForUpdate,
+  updateMovie,
 } = require("../controllers/movie");
 const { parseData } = require("../utils/helper");
-const { validateMovie, validate } = require("../middlewares/validator");
+const {
+  validateMovie,
+  validate,
+  validateTrailer,
+} = require("../middlewares/validator");
 
 const router = express.Router();
 
@@ -31,6 +37,7 @@ router.post(
   uploadImage.single("poster"),
   parseData,
   validateMovie,
+  validateTrailer,
   validate,
   createMovie
 );
@@ -60,10 +67,25 @@ router.patch(
   updateMoviewWithPoster
 );
 
+//This will be final update method, ignore above two- its just for refrances
+router.patch(
+  "/update/:movieId",
+  isAuth,
+  isAdmin,
+  uploadImage.single("poster"),
+  parseData,
+  validateMovie,
+  validate,
+  updateMovie
+);
+
 //delete a movie
 router.delete("/:movieId", isAuth, isAdmin, removeMovie);
 
 //Get admin movies - admin can fetch private as well as public movies
 router.get("/movies", isAuth, isAdmin, getMovies);
+
+//For movie update
+router.get("/for-update/:movieId", isAuth, isAdmin, getMovieForUpdate);
 
 module.exports = router;

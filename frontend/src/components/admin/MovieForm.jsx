@@ -24,6 +24,7 @@ import WriterSelector from "../WriterSelector";
 import ViewAllButton from "../ViewAllButton";
 import LabelWithBadge from "../LabelWithBadge";
 import { validateMovie } from "../../utils/validator";
+import { useEffect } from "react";
 // const results = fakeProfilesData;
 
 const defaultMovieInfo = {
@@ -41,7 +42,7 @@ const defaultMovieInfo = {
   status: "",
 };
 
-const MovieForm = ({ onSubmit, busy }) => {
+const MovieForm = ({ onSubmit, busy, btnTitle, initialState }) => {
   //Movie form will be in 2 sections
 
   const { updateNotification } = useNotification();
@@ -121,6 +122,7 @@ const MovieForm = ({ onSubmit, busy }) => {
     type,
     language,
     status,
+    releseDate,
   } = movieInfo;
 
   const updatePosterForUI = (file) => {
@@ -230,6 +232,20 @@ const MovieForm = ({ onSubmit, busy }) => {
   //   }
   // };
 
+  //For Update Part
+  useEffect(() => {
+    if (initialState) {
+      //Update movie info and poster
+      setMovieInfo({
+        ...initialState,
+        poster: null,
+        releseDate: initialState.releseDate.split("T")[0],
+      });
+      setSeletedPosterForUI(initialState.poster);
+      console.log(initialState);
+    }
+  }, [initialState]);
+
   return (
     <Fragment>
       <div className="flex space-x-3">
@@ -300,14 +316,16 @@ const MovieForm = ({ onSubmit, busy }) => {
           <input
             type="date"
             name="releseDate"
-            className={commonInputClasses + " border-2 rounded p-1 w-auto"}
+            //className={commonInputClasses + " border-2 rounded p-1 w-auto"}
+            className="bg-transparent outline-none dark:border-dark-subtle border-light-subtle dark:focus:border-white focus:border-primary transition dark:text-white text-primary border-2 rounded p-1 w-auto"
             onChange={handleChange}
+            value={releseDate}
           />
           <Submit
             busy={busy}
             type="button"
             onClick={handleSubmit}
-            value="Upload"
+            value={btnTitle}
           />
         </div>
 

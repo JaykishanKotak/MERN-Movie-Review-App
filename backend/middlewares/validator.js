@@ -121,30 +121,7 @@ exports.validateMovie = [
       }
       return true;
     }),
-  check("trailer")
-    .isObject()
-    .withMessage("trailer must be an objects with url and public id!")
-    .custom(({ url, public_id }) => {
-      try {
-        const result = new URL(url);
-        //If try to upload URL Without http / https
-        if (!result.protocol.includes("http")) {
-          throw Error("Trailer URL is invalid !");
-        }
-        //Check public id
-        //Ex : https://res.cloudinary.com/dsibkqsgu/video/upload/v1703335838/bhkb6muxfeow5hg2t3ot.mp4
-        const arr = url.split("/");
-        //Get last element of Arr URL
-        const publicId = arr[arr.length - 1].split(".")[0];
 
-        if (publicId !== public_id) {
-          throw Error("Trailer Public id is invalid !");
-        }
-        return true;
-      } catch (error) {
-        throw Error("Trailer URL is invalid !");
-      }
-    }),
   // check("poster").custom((_, { req }) => {
   //   if (!req.file) {
   //     throw Error("Poster file is invalid !");
@@ -152,3 +129,28 @@ exports.validateMovie = [
   //   return true;
   // }),
 ];
+
+exports.validateTrailer = check("trailer")
+  .isObject()
+  .withMessage("trailer must be an objects with url and public id!")
+  .custom(({ url, public_id }) => {
+    try {
+      const result = new URL(url);
+      //If try to upload URL Without http / https
+      if (!result.protocol.includes("http")) {
+        throw Error("Trailer URL is invalid !");
+      }
+      //Check public id
+      //Ex : https://res.cloudinary.com/dsibkqsgu/video/upload/v1703335838/bhkb6muxfeow5hg2t3ot.mp4
+      const arr = url.split("/");
+      //Get last element of Arr URL
+      const publicId = arr[arr.length - 1].split(".")[0];
+
+      if (publicId !== public_id) {
+        throw Error("Trailer Public id is invalid !");
+      }
+      return true;
+    } catch (error) {
+      throw Error("Trailer URL is invalid !");
+    }
+  });

@@ -4,12 +4,12 @@ import LatestUploads from "../LatestUploads";
 
 const Dashboard = () => {
   return (
-    <div className="grid grid-cols-3 gap-5 my-5">
+    <div className="grid grid-cols-3 gap-5 p-5">
       <AppInfoBox title="Total Uploads" subTitle="100" />
       <AppInfoBox title="Total Reviews" subTitle="15,00" />
 
       <AppInfoBox title="Total Users" subTitle="250" />
-
+      {/*Recent Uploads shows last 5 uploaded movies */}
       <LatestUploads />
     </div>
   );

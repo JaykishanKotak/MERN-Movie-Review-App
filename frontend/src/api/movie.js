@@ -59,3 +59,49 @@ export const getMovies = async (pageNo, limit) => {
     return catchError(error);
   }
 };
+
+export const getMovieForUpdate = async (id) => {
+  const token = getToken();
+
+  try {
+    const { data } = await client.get("/movie/for-update/" + id, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+    return data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+export const updateMovie = async (id, formData) => {
+  const token = getToken();
+  try {
+    const { data } = await client.patch("/movie/update/" + id, formData, {
+      headers: {
+        Authorization: "Bearer " + token,
+        "Content-Type": "multipart/form-data",
+      },
+    });
+
+    return data;
+  } catch (error) {
+    return catchError(error);
+  }
+};
+
+export const deleteMovie = async (id) => {
+  const token = getToken();
+  try {
+    const { data } = await client.delete(`/movie/${id}`, {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    });
+
+    return data;
+  } catch (error) {
+    return catchError(error);
+  }
+};

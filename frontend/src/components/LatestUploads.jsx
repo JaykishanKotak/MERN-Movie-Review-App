@@ -1,21 +1,118 @@
-import React from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import AppInfoTitle from "./AppInfoTitle";
 import { BsBoxArrowUpRight, BsPencilSquare, BsTrash } from "react-icons/bs";
+import { deleteMovie, getMovieForUpdate, getMovies } from "../api/movie";
+import { useNotification } from "../hooks";
+import ConfirmModal from "./Modals/ConfirmModal";
+import UpdateMovie from "./Modals/UpdateMovie";
+
+//Here page no and limit will be const becasue we only show last 5 uploaded movies in Latest uploads
+const pageNo = 0;
+const limit = 5;
+
 const LatestUploads = () => {
+  const [movies, setMovies] = useState([]);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [busy, setBusy] = useState(false);
+  const { updateNotification } = useNotification();
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+
+  const fetchLatestUpload = async () => {
+    const { error, movies } = await getMovies(pageNo, limit);
+    if (error) return updateNotification("error", error);
+
+    setMovies([...movies]);
+  };
+
+  useEffect(() => {
+    fetchLatestUpload();
+  }, []);
+
+  const handleOnDeleteClick = (movie) => {
+    setSelectedMovie(movie);
+    setShowConfirmModal(true);
+  };
+
+  const hideConfirmModal = () => {
+    setShowConfirmModal(false);
+  };
+
+  const handleOnDeleteConfirm = async () => {
+    setBusy(true);
+    const { message, error } = await deleteMovie(selectedMovie.id);
+    setBusy(false);
+    if (error) return updateNotification("error", error);
+    updateNotification("success", message);
+    fetchLatestUpload();
+    hideConfirmModal();
+  };
+
+  const handleOnEditClick = async ({ id }) => {
+    const { movie, error } = await getMovieForUpdate(id);
+    if (error) return updateNotification("error", error);
+    setSelectedMovie(movie);
+    setShowUpdateModal(true);
+  };
+
+  const hideUpdateModal = () => {
+    setShowUpdateModal(false);
+  };
+
+  const handleOnUpdate = (movie) => {
+    const updatedMovies = movies.map((m) => {
+      if (m.id === movie.id) {
+        return movie;
+      }
+      return m;
+    });
+    setMovies([...updatedMovies]);
+  };
   return (
-    <div className="dark:bg-secondary dark:shadow bg-white shadow p-5 rounded col-span-2">
-      {/*col-span-2 will allot two grid spaces to div */}
-      <AppInfoTitle title="Recent Uploads" />
-      <MovieListItem
-        movie={{
-          poster:
-            "https://images.unsplash.com/photo-1682687220208-22d7a2543e88?q=80&w=300&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
-          title: "Consequat culpa",
-          status: "public",
-          genres: ["Action", "Comady"],
-        }}
+    <Fragment>
+      <div className="dark:bg-secondary dark:shadow bg-white shadow p-5 rounded col-span-2">
+        {/*col-span-2 will allot two grid spaces to div */}
+        <AppInfoTitle title="Recent Uploads" />
+        <div className="space-y-3">
+          {movies.map((movie) => {
+            return (
+              <MovieListItem
+                key={movie.id}
+                movie={movie}
+                onDeleteClick={() => handleOnDeleteClick(movie)}
+                onEditClick={() => handleOnEditClick(movie)}
+              />
+            );
+          })}
+        </div>
+
+        {/* <MovieListItem
+      movie={{
+        poster:
+          "https://images.unsplash.com/photo-1682687220208-22d7a2543e88?q=80&w=300&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDF8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+        title: "Consequat culpa",
+        status: "public",
+        genres: ["Action", "Comady"],
+      }}
+    />*/}
+      </div>
+
+      <ConfirmModal
+        visible={showConfirmModal}
+        title="Are you sure ?"
+        subTitle="This action will remove this movie permanently !"
+        onCancel={hideConfirmModal}
+        onConfirm={handleOnDeleteConfirm}
+        busy={busy}
       />
-    </div>
+
+      <UpdateMovie
+        visible={showUpdateModal}
+        onClose={hideUpdateModal}
+        initialState={selectedMovie}
+        onSuccess={handleOnUpdate}
+      />
+    </Fragment>
   );
 };
 

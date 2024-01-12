@@ -1,15 +1,21 @@
-import React, { useEffect, useState } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import MovieListItem from "../MovieListItem";
-import { getMovies } from "../../api/movie";
+import { deleteMovie, getMovieForUpdate, getMovies } from "../../api/movie";
 import { useNotification } from "../../hooks";
 import NextAndPrevButton from "../NextAndPrevButton";
+import UpdateMovie from "../Modals/UpdateMovie";
+import ConfirmModal from "../Modals/ConfirmModal";
 
 const limit = 5;
 let currentPageNo = 0;
 const Movies = () => {
   const [movies, setMovies] = useState([]);
-
   const [reachedToEnd, setReachedToEnd] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedMovie, setSelectedMovie] = useState(null);
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [busy, setBusy] = useState(false);
+
   const { updateNotification } = useNotification();
 
   const fetchMovies = async (pageNo) => {
@@ -22,6 +28,7 @@ const Movies = () => {
     }
     setMovies([...movies]);
   };
+
   useEffect(() => {
     fetchMovies(currentPageNo);
   }, []);
@@ -43,18 +50,91 @@ const Movies = () => {
     currentPageNo -= 1;
     fetchMovies(currentPageNo);
   };
-  return (
-    <div className="space-y-3 p-5">
-      {movies.map((movie) => {
-        return <MovieListItem key={movie.id} movie={movie} />;
-      })}
 
-      <NextAndPrevButton
-        onNextClick={handleOnNextClick}
-        onPrevClick={handleOnPrevClick}
-        className="mt-5"
+  const handleOnEditClick = async ({ id }) => {
+    const { movie, error } = await getMovieForUpdate(id);
+    if (error) return updateNotification("error", error);
+
+    setSelectedMovie(movie);
+    setShowUpdateModal(true);
+    // console.log(movie);
+  };
+
+  const handleOnUpdate = (movie) => {
+    const updatedMovies = movies.map((m) => {
+      //If a movie is updated - return new info
+      if (m.id === movie.id) {
+        return movie;
+      }
+      //Else return old info
+      return m;
+    });
+    setMovies([...updatedMovies]);
+  };
+
+  const hideUpdateForm = () => {
+    setShowUpdateModal(false);
+  };
+
+  const hideConfrimModal = () => {
+    setShowConfirmModal(false);
+  };
+
+  const handleOnDeleteClick = (movie) => {
+    setSelectedMovie(movie);
+    setShowConfirmModal(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    setBusy(true);
+    const { message, error } = await deleteMovie(selectedMovie.id);
+    setBusy(false);
+    if (error) return updateNotification("error", error);
+    updateNotification("success", message);
+    hideConfirmModal();
+    fetchMovies(currentPageNo);
+  };
+
+  const hideConfirmModal = () => {
+    setShowConfirmModal(false);
+  };
+
+  return (
+    <Fragment>
+      <div className="space-y-3 p-5">
+        {movies.map((movie) => {
+          return (
+            <MovieListItem
+              key={movie.id}
+              movie={movie}
+              onEditClick={() => handleOnEditClick(movie)}
+              onDeleteClick={() => handleOnDeleteClick(movie)}
+            />
+          );
+        })}
+
+        <NextAndPrevButton
+          onNextClick={handleOnNextClick}
+          onPrevClick={handleOnPrevClick}
+          className="mt-5"
+        />
+      </div>
+
+      <ConfirmModal
+        title="Are you sure ?"
+        subTitle="This action will remove this movie permanently !"
+        visible={showConfirmModal}
+        onConfirm={handleDeleteConfirm}
+        onCancel={hideConfrimModal}
+        busy={busy}
       />
-    </div>
+      <UpdateMovie
+        visible={showUpdateModal}
+        initialState={selectedMovie}
+        onSuccess={handleOnUpdate}
+        onClose={hideUpdateForm}
+      />
+    </Fragment>
   );
 };
 
