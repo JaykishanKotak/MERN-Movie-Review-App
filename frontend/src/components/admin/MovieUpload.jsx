@@ -35,7 +35,7 @@ const MovieUpload = ({ visible, onClose }) => {
     setVideoSelected(true);
     handleUploadTrailer(formData);
   };
-  console.log("videoInfo", videoInfo);
+  // console.log("videoInfo", videoInfo);
   const handleTypeError = (error) => {
     console.log(error);
     updateNotification("error", error);

@@ -520,3 +520,23 @@ exports.updateMovie = async (req, res) => {
     },
   });
 };
+
+exports.searchMovie = async (req, res) => {
+  const { title } = req.query;
+
+  if (!title.trim()) {
+    return sendError(res, "Invalid Request !");
+  }
+  const movies = await Movie.find({ title: { $regex: title, $options: "i" } });
+  res.json({
+    results: movies.map((m) => {
+      return {
+        id: m._id,
+        title: m.title,
+        genres: m.genres,
+        poster: m.poster?.url,
+        status: m.status,
+      };
+    }),
+  });
+};

@@ -10,6 +10,7 @@ const {
   getMovies,
   getMovieForUpdate,
   updateMovie,
+  searchMovie,
 } = require("../controllers/movie");
 const { parseData } = require("../utils/helper");
 const {
@@ -78,6 +79,9 @@ router.patch(
   validate,
   updateMovie
 );
+
+//Search movie
+router.get("/search", isAuth, isAdmin, searchMovie);
 
 //delete a movie
 router.delete("/:movieId", isAuth, isAdmin, removeMovie);
