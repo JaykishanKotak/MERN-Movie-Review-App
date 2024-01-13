@@ -1,7 +1,74 @@
-import React from "react";
+import React, { Fragment, useState } from "react";
 import { BsBoxArrowUpRight, BsPencilSquare, BsTrash } from "react-icons/bs";
+import ConfirmModal from "./Modals/ConfirmModal";
+import { useNotification } from "../hooks";
+import { deleteMovie } from "../api/movie";
+import UpdateMovie from "./Modals/UpdateMovie";
 
-const MovieListItem = ({ movie, onOpenClick, onEditClick, onDeleteClick }) => {
+const MovieListItem = ({ movie, afterDelete, afterUpdate }) => {
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [selectedMovieId, setSelectedMovieId] = useState(null);
+  const { updateNotification } = useNotification();
+  const handleDeleteConfirm = async () => {
+    setBusy(true);
+    const { message, error } = await deleteMovie(movie.id);
+    setBusy(false);
+    if (error) return updateNotification("error", error);
+
+    hideConfirmModal();
+    updateNotification("success", message);
+    afterDelete(movie);
+  };
+
+  const displayConfirmModal = () => setShowConfirmModal(true);
+
+  const hideConfirmModal = () => setShowConfirmModal(false);
+
+  const handleOnEditClick = () => {
+    setSelectedMovieId(movie.id);
+    setShowUpdateModal(true);
+  };
+
+  const hideUpdateForm = () => setShowUpdateModal(false);
+
+  const handleOnUpdate = (movie) => {
+    afterUpdate(movie);
+    setShowUpdateModal(false);
+    setSelectedMovieId(null);
+  };
+  const { poster, title, genres = [], status } = movie;
+
+  return (
+    <Fragment>
+      <MovieCard
+        movie={movie}
+        onDeleteClick={displayConfirmModal}
+        onEditClick={handleOnEditClick}
+      />
+      <div className="p-0">
+        <ConfirmModal
+          title="Are you sure ?"
+          subTitle="This action will remove this movie permanently !"
+          visible={showConfirmModal}
+          onConfirm={handleDeleteConfirm}
+          onCancel={hideConfirmModal}
+          busy={busy}
+        />
+
+        <UpdateMovie
+          visible={showUpdateModal}
+          movieId={selectedMovieId}
+          onSuccess={handleOnUpdate}
+          onClose={hideUpdateForm}
+        />
+      </div>
+    </Fragment>
+  );
+};
+
+const MovieCard = ({ movie, onOpenClick, onEditClick, onDeleteClick }) => {
   const { poster, title, genres = [], status } = movie;
   return (
     <table className="w-full border-b">
@@ -57,5 +124,4 @@ const MovieListItem = ({ movie, onOpenClick, onEditClick, onDeleteClick }) => {
     </table>
   );
 };
-
 export default MovieListItem;

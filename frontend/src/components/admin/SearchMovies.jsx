@@ -33,12 +33,41 @@ const SearchMovies = () => {
       searchMovie(query);
     }
   }, [query]);
+
+  const handleAfterDelete = (movie) => {
+    //Exclude the deleted movie from state array
+    const updatedMovies = movies.filter((m) => m.id !== movie.id);
+    // const updatedMovies = movies.filter((m) => {
+    //   if (m.id !== movie.id) {
+    //     return m;
+    //   }
+    // });
+    setMovies([...updatedMovies]);
+  };
+
+  const handleAfterUpdate = (movie) => {
+    //Update state for updated movie in array
+    const updatedMovies = movies.map((m) => {
+      if (m.id === movie.id) {
+        return movie;
+      }
+      return m;
+    });
+    setMovies([...updatedMovies]);
+  };
   return (
     <div className="p-5 space-y-3">
       <NotFoundText text="Record not found !" visible={resultNotFound} />
       {!resultNotFound &&
         movies.map((movie) => {
-          return <MovieListItem key={movie.id} movie={movie} />;
+          return (
+            <MovieListItem
+              key={movie.id}
+              movie={movie}
+              afterDelete={handleAfterDelete}
+              afterUpdate={handleAfterUpdate}
+            />
+          );
         })}
     </div>
   );
