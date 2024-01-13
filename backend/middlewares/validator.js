@@ -154,3 +154,8 @@ exports.validateTrailer = check("trailer")
       throw Error("Trailer URL is invalid !");
     }
   });
+
+exports.validateRatings = check(
+  "rating",
+  "Rating must be a number between 0 and 10 !"
+).isFloat({ min: 0, max: 10 });

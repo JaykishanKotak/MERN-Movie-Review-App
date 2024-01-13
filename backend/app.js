@@ -30,12 +30,14 @@ app.use(morgan("dev"));
 const userRouter = require("./routes/user");
 const actorRouter = require("./routes/actor");
 const movieRouter = require("./routes/movie");
+const reviewRouter = require("./routes/review");
 
 // console.log(app);
 
 app.use("/api/user", userRouter);
 app.use("/api/actor", actorRouter);
 app.use("/api/movie", movieRouter);
+app.use("/api/review", reviewRouter);
 
 //Handleing 404 Error using universal route
 app.use("/*", handleNotFound);
