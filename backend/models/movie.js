@@ -70,7 +70,7 @@ const movieSchema = mongoose.Schema(
       public_id: { type: String, required: true },
       //To store responsive images
       responsive: [URL],
-      required: true,
+      // required: true,
     },
     //Video
     trailer: {

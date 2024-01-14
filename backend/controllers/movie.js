@@ -1,7 +1,17 @@
-const { sendError, formatActor } = require("../utils/helper");
+const {
+  sendError,
+  formatActor,
+  averageRatingPipeline,
+  reletedMovieAggregation,
+  getAverageRatings,
+  topRatedMoviesPipeline,
+} = require("../utils/helper");
 const cloudinary = require("../cloud");
 const Movie = require("../models/movie");
-const { isValidObjectId } = require("mongoose");
+const Review = require("../models/review");
+const { isValidObjectId, default: mongoose } = require("mongoose");
+
+// ======================== For Admin Only ========================
 
 exports.uploadTrailer = async (req, res) => {
   const { file } = req;
@@ -539,4 +549,152 @@ exports.searchMovie = async (req, res) => {
       };
     }),
   });
+};
+
+// ======================== For Normal Users ========================
+
+exports.getLatestUploads = async (req, res) => {
+  const { limit = 5 } = req.query;
+  //We only sent public movies to normal users
+  const results = await Movie.find({ status: "public" })
+    .sort("-createdAt")
+    .limit(parseInt(limit));
+
+  const movies = results.map((m) => {
+    return {
+      id: m._id,
+      title: m.title,
+      poster: m.poster?.url,
+      trailer: m.trailer?.url,
+      storyLine: m.storyLine,
+    };
+  });
+
+  res.json({ movies });
+};
+
+exports.getSingleMovie = async (req, res) => {
+  const { movieId } = req.params;
+
+  //Convert movieId(string) as valid ObjectId
+  // mongoose.Types.ObjectId(movieId);
+
+  if (!isValidObjectId(movieId)) {
+    return sendError(res, "Movie Id is not valid!");
+  }
+  const movie = await Movie.findById(movieId).populate(
+    "director writers cast.actor"
+  );
+
+  // //Aggregate pipeline only accepts id as objId not as string
+  // const [aggregatedResponse] = await Review.aggregate(
+  //   averageRatingPipeline(movie._id)
+  // );
+
+  // const reviews = {};
+
+  // //If we have response, becasue movie have or hav not reviews
+  // if (aggregatedResponse) {
+  //   const { ratingAvg, reviewCount } = aggregatedResponse;
+  //   reviews.ratingAvg = parseFloat(ratingAvg).toFixed(1);
+  //   reviews.reviewCount = reviewCount;
+  // }
+
+  const reviews = await getAverageRatings(movie._id);
+
+  console.log(reviews);
+  const {
+    _id: id,
+    title,
+    storyLine,
+    cast,
+    writers,
+    director,
+    releseDate,
+    genres,
+    tags,
+    language,
+    poster,
+    trailer,
+    type,
+  } = movie;
+  res.json({
+    movie: {
+      id,
+      title,
+      storyLine,
+      releseDate,
+      genres,
+      tags,
+      language,
+      type,
+      poster: poster?.url,
+      trailer: trailer?.url,
+      cast: cast.map((c) => ({
+        id: c._id,
+        profile: {
+          id: c.actor._id,
+          name: c.actor.name,
+          avatar: c.actor?.avatar?.url,
+        },
+        leadActor: c.leadActor,
+        roleAs: c.roleAs,
+      })),
+      writers: writers.map((w) => ({
+        id: w._id,
+        name: w.name,
+      })),
+      director: {
+        id: director._id,
+        name: director.name,
+      },
+      reviews: { ...reviews },
+    },
+  });
+};
+
+exports.getReletedMovies = async (req, res) => {
+  const { movieId } = req.params;
+  if (!isValidObjectId(movieId)) {
+    return sendError(res, "Invalid movie id!");
+  }
+  //We will find releted movie with use of tags
+  const movie = await Movie.findById(movieId);
+
+  const movies = await Movie.aggregate(
+    reletedMovieAggregation(movie.tags, movie._id)
+  );
+
+  //We use promise because we can't use await in map fuction
+  const reletedMovies = await Promise.all(
+    movies.map(async (m) => {
+      const reviews = await getAverageRatings(m._id);
+      return {
+        id: m._id,
+        title: m.title,
+        poster: m.poster,
+        reviews: { ...reviews },
+      };
+    })
+  );
+  res.json({ reletedMovies });
+};
+
+exports.getTopRatedMovies = async (req, res) => {
+  //Type is a optional field
+  const { type = "Film" } = req.query;
+  const movies = await Movie.aggregate(topRatedMoviesPipeline(type));
+
+  const mapMovies = async (m) => {
+    const reviews = await getAverageRatings(m._id);
+    return {
+      id: m._id,
+      title: m.title,
+      poster: m.poster,
+      reviews: { ...reviews },
+    };
+  };
+  const topRatedMovies = await Promise.all(movies.map(mapMovies));
+
+  res.json({ movies: topRatedMovies });
 };

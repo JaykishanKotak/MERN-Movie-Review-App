@@ -1,5 +1,6 @@
 const crypto = require("crypto");
 const cloudinary = require("../cloud");
+const Review = require("../models/review");
 
 //Dynamic Error Return function
 exports.sendError = (res, error, statusCode = 401) => {
@@ -73,4 +74,129 @@ exports.parseData = (req, res, next) => {
     req.body.genres = JSON.parse(genres);
   }
   next();
+};
+
+//Mongodb aggregate pipeline To get average ratings
+exports.averageRatingPipeline = (movieId) => {
+  // Aggregation pipeline Flow -> Review => rating => parentMovieId => calculateAvg
+  return [
+    //Step 1 - Multiple opertaion to lookup Review records from a single database
+    //It will match from Review table's local field id With forignField's id
+    {
+      $lookup: {
+        from: "Review",
+        localField: "rating",
+        foreignField: "_id",
+        as: "avgRat",
+      },
+    },
+    //Setp 2 - Only Grab reviews of a parent movie which has same id as parentMovie in movie and movie id in Movie table
+    {
+      $match: { parentMovie: movieId },
+    },
+    //Step - 3 Gropu all of those data and peform average and counting operations
+    {
+      $group: {
+        _id: null,
+        ratingAvg: {
+          $avg: "$rating",
+        },
+        reviewsCount: {
+          $sum: 1,
+        },
+      },
+    },
+  ];
+};
+
+exports.reletedMovieAggregation = (tags, movieId) => {
+  return [
+    //find matching records according to tags
+    {
+      $lookup: {
+        from: "Movie",
+        localField: "tags",
+        foreignField: "_id",
+        as: "reletedMovies",
+      },
+    },
+    //Find all movies records  matching with tags and not equle the same movie id
+    {
+      $match: {
+        tags: { $in: [...tags] },
+        _id: { $ne: movieId },
+      },
+    },
+    //add new data fields
+    {
+      $project: {
+        // _id : 0,
+        title: 1,
+        poster: "$poster.url",
+      },
+    },
+    //we need for only 5 records
+    {
+      $limit: 5,
+    },
+  ];
+};
+
+exports.getAverageRatings = async (movieId) => {
+  //Aggregate pipeline only accepts id as objId not as string
+  const [aggregatedResponse] = await Review.aggregate(
+    this.averageRatingPipeline(movieId)
+  );
+
+  const reviews = {};
+
+  //If we have response, becasue movie have or hav not reviews
+  console.log(aggregatedResponse);
+  if (aggregatedResponse) {
+    const { ratingAvg, reviewsCount } = aggregatedResponse;
+    reviews.ratingAvg = parseFloat(ratingAvg).toFixed(1);
+    reviews.reviewsCount = reviewsCount;
+  }
+  return reviews;
+};
+
+exports.topRatedMoviesPipeline = (type) => {
+  return [
+    {
+      $lookup: {
+        from: "Movie",
+        localField: "reviews",
+        foreignField: "_id",
+        as: "topRated",
+      },
+    },
+    //Movie need to be have a review and it;s status equal to public, and we check same type of movies here
+    {
+      $match: {
+        reviews: { $exists: true },
+        status: { $eq: "public" },
+        type: { $eq: type },
+      },
+    },
+    //Create new data objecst with data and add review count
+    {
+      $project: {
+        title: 1,
+        poster: "$poster.url",
+        reviewCount: {
+          $size: "$reviews",
+        },
+      },
+    },
+    //sort in decending order
+    {
+      $sort: {
+        reviewCount: -1,
+      },
+    },
+    //limit
+    {
+      $limit: 5,
+    },
+  ];
 };

@@ -11,6 +11,10 @@ const {
   getMovieForUpdate,
   updateMovie,
   searchMovie,
+  getLatestUploads,
+  getSingleMovie,
+  getReletedMovies,
+  getTopRatedMovies,
 } = require("../controllers/movie");
 const { parseData } = require("../utils/helper");
 const {
@@ -20,6 +24,8 @@ const {
 } = require("../middlewares/validator");
 
 const router = express.Router();
+
+// ======================== For Admin Only ========================
 
 //Upload movie trailer
 router.post(
@@ -91,5 +97,19 @@ router.get("/movies", isAuth, isAdmin, getMovies);
 
 //For movie update
 router.get("/for-update/:movieId", isAuth, isAdmin, getMovieForUpdate);
+
+// ======================== For Normal Users ========================
+
+//get latest uploads
+router.get("/latest-uploads", getLatestUploads);
+
+//get single movie
+router.get("/single/:movieId", getSingleMovie);
+
+//get releted movies
+router.get("/releted/:movieId", getReletedMovies);
+
+//get top rated movies
+router.get("/top-rated", getTopRatedMovies);
 
 module.exports = router;
