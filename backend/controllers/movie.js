@@ -653,12 +653,12 @@ exports.getSingleMovie = async (req, res) => {
   });
 };
 
-exports.getReletedMovies = async (req, res) => {
+exports.getRelatedMovies = async (req, res) => {
   const { movieId } = req.params;
   if (!isValidObjectId(movieId)) {
     return sendError(res, "Invalid movie id!");
   }
-  //We will find releted movie with use of tags
+  //We will find related movie with use of tags
   const movie = await Movie.findById(movieId);
 
   const movies = await Movie.aggregate(
@@ -666,7 +666,7 @@ exports.getReletedMovies = async (req, res) => {
   );
 
   //We use promise because we can't use await in map fuction
-  const reletedMovies = await Promise.all(
+  const relatedMovies = await Promise.all(
     movies.map(async (m) => {
       const reviews = await getAverageRatings(m._id);
       return {
@@ -677,7 +677,7 @@ exports.getReletedMovies = async (req, res) => {
       };
     })
   );
-  res.json({ reletedMovies });
+  res.json({ movies: relatedMovies });
 };
 
 exports.getTopRatedMovies = async (req, res) => {

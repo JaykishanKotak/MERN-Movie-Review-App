@@ -13,7 +13,7 @@ const {
   searchMovie,
   getLatestUploads,
   getSingleMovie,
-  getReletedMovies,
+  getRelatedMovies,
   getTopRatedMovies,
 } = require("../controllers/movie");
 const { parseData } = require("../utils/helper");
@@ -107,7 +107,7 @@ router.get("/latest-uploads", getLatestUploads);
 router.get("/single/:movieId", getSingleMovie);
 
 //get releted movies
-router.get("/releted/:movieId", getReletedMovies);
+router.get("/related/:movieId", getRelatedMovies);
 
 //get top rated movies
 router.get("/top-rated", getTopRatedMovies);
