@@ -1,9 +1,9 @@
 import React, { Fragment, useState } from "react";
 import { BsBoxArrowUpRight, BsPencilSquare, BsTrash } from "react-icons/bs";
-import ConfirmModal from "./Modals/ConfirmModal";
+import ConfirmModal from "./modals/ConfirmModal";
 import { useNotification } from "../hooks";
 import { deleteMovie } from "../api/movie";
-import UpdateMovie from "./Modals/UpdateMovie";
+import UpdateMovie from "./modals/UpdateMovie";
 
 const MovieListItem = ({ movie, afterDelete, afterUpdate }) => {
   const [showConfirmModal, setShowConfirmModal] = useState(false);

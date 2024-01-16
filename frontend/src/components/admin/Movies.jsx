@@ -3,8 +3,8 @@ import MovieListItem from "../MovieListItem";
 import { deleteMovie, getMovieForUpdate, getMovies } from "../../api/movie";
 import { useMovies, useNotification } from "../../hooks";
 import NextAndPrevButton from "../NextAndPrevButton";
-import UpdateMovie from "../Modals/UpdateMovie";
-import ConfirmModal from "../Modals/ConfirmModal";
+import UpdateMovie from "../modals/UpdateMovie";
+import ConfirmModal from "../modals/ConfirmModal";
 
 const limit = 5;
 let currentPageNo = 0;

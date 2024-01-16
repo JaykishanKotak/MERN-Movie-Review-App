@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import ModalContainer from "../Modals/ModalContainer";
+import ModalContainer from "../modals/ModalContainer";
 import ActorForm from "../form/ActorForm";
 import { createActor, updateActor } from "../../api/actor";
 import { useNotification } from "../../hooks";

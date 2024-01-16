@@ -5,13 +5,13 @@ import { commonInputClasses } from "../../utils/theme";
 import { fakeProfilesData } from "../../utils/fakeProfilesData";
 import Submit from "../form/Submit";
 import { useNotification, useSearch } from "../../hooks";
-import ModalContainer from "../Modals/ModalContainer";
-import WritersModal from "../Modals/WritersModal";
+import ModalContainer from "../modals/ModalContainer";
+import WritersModal from "../modals/WritersModal";
 import CastForm from "../form/CastForm";
-import CastModal from "../Modals/CastModal";
+import CastModal from "../modals/CastModal";
 import PosterSelector from "../PosterSelector";
 import GenresSelector from "../GenresSelector";
-import GenresModal from "../Modals/GenresModal";
+import GenresModal from "../modals/GenresModal";
 import Selector from "../Selector";
 import {
   languageOptions,

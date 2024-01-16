@@ -3,10 +3,10 @@ import { BsPencilSquare, BsTrash } from "react-icons/bs";
 import { deleteActor, getActors, searchActor } from "../../api/actor";
 import { useNotification, useSearch } from "../../hooks";
 import NextAndPrevButton from "../NextAndPrevButton";
-import UpdateActor from "../Modals/UpdateActor";
+import UpdateActor from "../modals/UpdateActor";
 import AppSearchForm from "../form/AppSearchForm";
 import NotFoundText from "../NotFoundText";
-import ConfirmModal from "../Modals/ConfirmModal";
+import ConfirmModal from "../modals/ConfirmModal";
 
 let currentPageNo = 0;
 const limit = 20; //Fixed limit

@@ -3,8 +3,8 @@ import AppInfoTitle from "./AppInfoTitle";
 import { BsBoxArrowUpRight, BsPencilSquare, BsTrash } from "react-icons/bs";
 import { deleteMovie, getMovieForUpdate, getMovies } from "../api/movie";
 import { useMovies, useNotification } from "../hooks";
-import ConfirmModal from "./Modals/ConfirmModal";
-import UpdateMovie from "./Modals/UpdateMovie";
+import ConfirmModal from "./modals/ConfirmModal";
+import UpdateMovie from "./modals/UpdateMovie";
 import MovieListItem from "./MovieListItem";
 
 //Here page no and limit will be const becasue we only show last 5 uploaded movies in Latest uploads

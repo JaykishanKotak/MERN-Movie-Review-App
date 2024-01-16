@@ -5,9 +5,10 @@ import { useAuth, useNotification } from "../../hooks";
 import Container from "../Container";
 import RatingStar from "../RatingStar";
 import RelatedMovies from "../RelatedMovies";
+import AddRatingModal from "../modals/AddRatingModal";
 
 //To handle review count if its more then 999
-const convertReviewCount = (count) => {
+const convertReviewCount = (count = 0) => {
   if (count <= 999) {
     return count;
   }
@@ -23,9 +24,10 @@ const convertDate = (date = "") => {
 const SingleMovie = () => {
   const [movie, setMovie] = useState({});
   const [ready, setReady] = useState(false);
+  const [showRatingModal, setShowRatingModal] = useState(false);
 
-  const { isLoggedIn } = useAuth();
-
+  const { authInfo } = useAuth();
+  const { isLoggedIn } = authInfo;
   const navigate = useNavigate();
 
   const { updateNotification } = useNotification();
@@ -53,6 +55,15 @@ const SingleMovie = () => {
 
   const handleOnRateMovie = () => {
     if (!isLoggedIn) return navigate("/auth/signin");
+    setShowRatingModal(true);
+  };
+
+  const hideRatingModal = () => {
+    setShowRatingModal(false);
+  };
+
+  const handleOnRatingSuccess = (reviews) => {
+    setMovie({ ...movie, reviews: { ...reviews } });
   };
   const {
     trailer,
@@ -196,9 +207,8 @@ const SingleMovie = () => {
           <div className="grid grid-cols-10 mt-5 ">
             {cast.map((c) => {
               return (
-                <div className="flex flex-col items-center">
+                <div key={c.profile.id} className="flex flex-col items-center">
                   <img
-                    key={c.profile.id}
                     className="w-24 h-24 aspect-square object-cover rounded-full"
                     src={c.profile.avatar}
                     alt={c.profile.name}
@@ -222,6 +232,12 @@ const SingleMovie = () => {
           <RelatedMovies movieId={movieId} />
         </div>
       </Container>
+
+      <AddRatingModal
+        visible={showRatingModal}
+        onClose={hideRatingModal}
+        onSuccess={handleOnRatingSuccess}
+      />
     </div>
   );
 };

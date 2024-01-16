@@ -4,7 +4,7 @@ import { AiOutlineCloudUpload } from "react-icons/ai";
 import { useNotification } from "../../hooks";
 import { uploadMovie, uploadTrailer } from "../../api/movie";
 import MovieForm from "./MovieForm";
-import ModalContainer from "../Modals/ModalContainer";
+import ModalContainer from "../modals/ModalContainer";
 
 const MovieUpload = ({ visible, onClose }) => {
   const { updateNotification } = useNotification();
