@@ -370,6 +370,7 @@ exports.getMovies = async (req, res) => {
     id: movie._id,
     title: movie.title,
     poster: movie.poster?.url,
+    responsivePosters: movie.poster?.responsive,
     genres: movie.genres,
     status: movie.status,
   }));
@@ -565,6 +566,7 @@ exports.getLatestUploads = async (req, res) => {
       id: m._id,
       title: m.title,
       poster: m.poster?.url,
+      responsivePosters: m.poster?.responsive,
       trailer: m.trailer?.url,
       storyLine: m.storyLine,
     };
@@ -673,6 +675,7 @@ exports.getRelatedMovies = async (req, res) => {
         id: m._id,
         title: m.title,
         poster: m.poster,
+        responsivePosters: m.responsivePosters,
         reviews: { ...reviews },
       };
     })
@@ -691,6 +694,7 @@ exports.getTopRatedMovies = async (req, res) => {
       id: m._id,
       title: m.title,
       poster: m.poster,
+      responsivePosters: m.responsivePosters,
       reviews: { ...reviews },
     };
   };

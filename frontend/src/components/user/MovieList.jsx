@@ -3,6 +3,7 @@ import GridContainer from "../GridContainer";
 import { AiFillStar } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import RatingStar from "../RatingStar";
+import { getPoster } from "../../utils/helper";
 
 const trimTitle = (text = "") => {
   if (text.length <= 20) {
@@ -35,11 +36,15 @@ const MovieList = ({ title, movies = [] }) => {
 export default MovieList;
 
 const ListItem = ({ movie }) => {
-  const { id, title, poster, reviews } = movie;
+  const { id, title, poster, reviews, responsivePosters } = movie;
   //We are using link here to redirection on single movie page on click
   return (
     <Link to={"/movie/" + id}>
-      <img src={poster} alt={title} className="aspect-video object-cover" />
+      <img
+        src={getPoster(responsivePosters) || poster}
+        alt={title}
+        className="aspect-video object-cover"
+      />
       <h1
         className="text-lg dark:text-white text-secondary font-semibold"
         title={title}

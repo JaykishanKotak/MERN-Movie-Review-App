@@ -133,6 +133,7 @@ exports.reletedMovieAggregation = (tags, movieId) => {
         // _id : 0,
         title: 1,
         poster: "$poster.url",
+        responsivePosters: "$poster.responsive",
       },
     },
     //we need for only 5 records
@@ -183,6 +184,7 @@ exports.topRatedMoviesPipeline = (type) => {
       $project: {
         title: 1,
         poster: "$poster.url",
+        responsivePosters: "$poster.responsive",
         reviewCount: {
           $size: "$reviews",
         },

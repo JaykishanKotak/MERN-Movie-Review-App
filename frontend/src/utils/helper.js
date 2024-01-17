@@ -27,3 +27,18 @@ export const renderItem = (result) => {
     </div>
   );
 };
+
+export const getPoster = (posters) => {
+  /**
+   * If poster more then 2 items - select 2nd poster
+   * else select first poster
+   */
+  const { length } = posters;
+  if (!length) return null;
+
+  //If poster more then 2 posters
+  if (length > 2) return posters[1];
+
+  //Select first one
+  return posters[0];
+};
