@@ -16,9 +16,11 @@ const MovieList = ({ title, movies = [] }) => {
   if (!movies.length) return null;
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-5 dark:text-white text-secondary">
-        {title}
-      </h1>
+      {title ? (
+        <h1 className="text-2xl font-semibold mb-5 dark:text-white text-secondary">
+          {title}
+        </h1>
+      ) : null}
       <GridContainer>
         {/*Array(5)
             .fill("")
@@ -43,7 +45,7 @@ const ListItem = ({ movie }) => {
       <img
         src={getPoster(responsivePosters) || poster}
         alt={title}
-        className="aspect-video object-cover"
+        className="w-full aspect-video object-cover"
       />
       <h1
         className="text-lg dark:text-white text-secondary font-semibold"

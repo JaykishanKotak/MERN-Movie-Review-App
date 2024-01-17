@@ -6,6 +6,10 @@ import { Link } from "react-router-dom";
 
 let count = 0;
 let intervalId;
+
+let newTime = 0;
+let lastTime = 0;
+
 const HeroSlideShow = () => {
   //Use F2 to change state everywhere in file
   //To Store info about movie
@@ -60,6 +64,7 @@ const HeroSlideShow = () => {
   };
   //Curretn index 0,1,2,3,4 if go beyond 4 it will throw a error
   const handleOnNextClick = () => {
+    lastTime = Date.now();
     pauseSlideShow();
     //Prev slide
     setClonedSlide(slides[count]);
@@ -105,7 +110,15 @@ const HeroSlideShow = () => {
 
   const startSlideShow = () => {
     //slide show animation for every 3.5s
-    intervalId = setInterval(handleOnNextClick, 3500);
+    intervalId = setInterval(() => {
+      //To handle pause and animation lag on tab change
+      newTime = Date.now();
+      //Check diff between two times ref : https://johnresig.com/blog/how-javascript-timers-work/
+      const delta = newTime - lastTime;
+      if (delta < 10000) return clearInterval(intervalId);
+      // console.log(delta);
+      handleOnNextClick();
+    }, 3500);
   };
 
   const pauseSlideShow = () => {
@@ -149,7 +162,7 @@ const HeroSlideShow = () => {
   return (
     <div className="flex w-full">
       {/*Slider show section */}
-      <div className="w-4/5 aspect-video relative overflow-hidden">
+      <div className="md:w-4/5 w-full aspect-video relative overflow-hidden">
         {/*Current  Slide*/}
         {/* <div className="cursor-pointer w-full">
           <img
@@ -188,7 +201,7 @@ const HeroSlideShow = () => {
         />
       </div>
       {/*Up next section */}
-      <div className="w-1/5 space-y-3 px-3">
+      <div className="w-1/5 space-y-3 px-3 md:block hidden">
         <h1 className="font-semibold text-2xl text-primary dark:text-white">
           Up Next
         </h1>
