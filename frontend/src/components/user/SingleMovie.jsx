@@ -7,6 +7,7 @@ import RatingStar from "../RatingStar";
 import RelatedMovies from "../RelatedMovies";
 import AddRatingModal from "../modals/AddRatingModal";
 import CustomButtonLink from "../CustomButtonLink";
+import ProfileModal from "../modals/ProfileModal";
 
 //To handle review count if its more then 999
 const convertReviewCount = (count = 0) => {
@@ -26,6 +27,8 @@ const SingleMovie = () => {
   const [movie, setMovie] = useState({});
   const [ready, setReady] = useState(false);
   const [showRatingModal, setShowRatingModal] = useState(false);
+  const [showProfileModal, setShowProfileModal] = useState(false);
+  const [selectedProfile, setSelectedProfile] = useState({});
 
   const { authInfo } = useAuth();
   const { isLoggedIn } = authInfo;
@@ -66,6 +69,16 @@ const SingleMovie = () => {
   const handleOnRatingSuccess = (reviews) => {
     setMovie({ ...movie, reviews: { ...reviews } });
   };
+
+  const handleProfileClick = (profile) => {
+    setSelectedProfile(profile);
+    setShowProfileModal(true);
+  };
+
+  const hideProfileModal = () => {
+    setShowProfileModal(false);
+  };
+
   const {
     trailer,
     poster,
@@ -120,7 +133,10 @@ const SingleMovie = () => {
           <p className="text-light-subtle dark:text-dark-subtle">{storyLine}</p>
           {/*This is a refector code, Check old code down for ref */}
           <ListWithLabel label="Director :">
-            <CustomButtonLink label={director.name} />
+            <CustomButtonLink
+              label={director.name}
+              onClick={() => handleProfileClick(director)}
+            />
           </ListWithLabel>
 
           <ListWithLabel label="Writers :">
@@ -164,6 +180,12 @@ const SingleMovie = () => {
           <RelatedMovies movieId={movieId} />
         </div>
       </Container>
+
+      <ProfileModal
+        visible={showProfileModal}
+        onClose={hideProfileModal}
+        profileId={selectedProfile.id}
+      />
 
       <AddRatingModal
         visible={showRatingModal}
