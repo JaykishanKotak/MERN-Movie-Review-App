@@ -62,6 +62,11 @@ exports.updateReview = async (req, res) => {
 
   const userId = req.user._id;
 
+  //If user is not verified
+  if (!req.user.isVerified) {
+    return sendError(res, "Please Verify your email first !");
+  }
+
   if (!isValidObjectId(reviewId)) {
     return sendError(res, "Invalid review ID!");
   }

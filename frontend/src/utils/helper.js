@@ -42,3 +42,13 @@ export const getPoster = (posters) => {
   //Select first one
   return posters[0];
 };
+
+//To handle review count if its more then 999
+export const convertReviewCount = (count = 0) => {
+  if (count <= 999) {
+    return count;
+  }
+  //Ex   parseFloat(1222 / 1000).toFixed(2) => 1.22;
+  //If reviews if more then 999 we will add to K formate ex : 1222 -> 1.22k with last 2 digits
+  return parseFloat(count / 1000).toFixed(2) + "k";
+};

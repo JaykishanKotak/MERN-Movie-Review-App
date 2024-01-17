@@ -162,6 +162,15 @@ exports.getAverageRatings = async (movieId) => {
 };
 
 exports.topRatedMoviesPipeline = (type) => {
+  const matchOptions = {
+    reviews: { $exists: true },
+    status: { $eq: "public" },
+  };
+
+  if (type) {
+    matchOptions.type = { $eq: type };
+  }
+
   return [
     {
       $lookup: {
@@ -172,12 +181,15 @@ exports.topRatedMoviesPipeline = (type) => {
       },
     },
     //Movie need to be have a review and it;s status equal to public, and we check same type of movies here
+    // {
+    //   $match: {
+    //     reviews: { $exists: true },
+    //     status: { $eq: "public" },
+    //     type: { $eq: type },
+    //   },
+    // },
     {
-      $match: {
-        reviews: { $exists: true },
-        status: { $eq: "public" },
-        type: { $eq: type },
-      },
+      $match: matchOptions,
     },
     //Create new data objecst with data and add review count
     {

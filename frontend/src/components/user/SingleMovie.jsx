@@ -8,16 +8,7 @@ import RelatedMovies from "../RelatedMovies";
 import AddRatingModal from "../modals/AddRatingModal";
 import CustomButtonLink from "../CustomButtonLink";
 import ProfileModal from "../modals/ProfileModal";
-
-//To handle review count if its more then 999
-const convertReviewCount = (count = 0) => {
-  if (count <= 999) {
-    return count;
-  }
-  //Ex   parseFloat(1222 / 1000).toFixed(2) => 1.22;
-  //If reviews if more then 999 we will add to K formate ex : 1222 -> 1.22k with last 2 digits
-  return parseFloat(count / 1000).toFixed(2) + "k";
-};
+import { convertReviewCount } from "../../utils/helper";
 
 //To conver release date
 const convertDate = (date = "") => {
