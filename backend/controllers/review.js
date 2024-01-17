@@ -128,7 +128,7 @@ exports.getReviewsByMovie = async (req, res) => {
         select: "name",
       },
     })
-    .select("reviews");
+    .select("reviews title");
 
   const reviews = movie.reviews.map((r) => {
     const { owner, content, rating, _id: reviewId } = r;
@@ -145,5 +145,6 @@ exports.getReviewsByMovie = async (req, res) => {
     };
   });
   // res.json(movie.reviews);
-  res.json({ reviews });
+  // res.json({ reviews });
+  res.json({ movie: { title: movie.title, reviews } });
 };

@@ -1,17 +1,22 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AiOutlineStar, AiFillStar } from "react-icons/ai";
 import Submit from "./Submit";
 
+const createArray = (count) => {
+  return new Array(count).fill("");
+};
 //Arrray to render rating starts
-const ratings = new Array(10).fill("");
-const RatingForm = ({ onSubmit, busy }) => {
+// const ratings = new Array(10).fill("");
+const ratings = createArray(10);
+const RatingForm = ({ onSubmit, busy, initialState }) => {
   const [selectedRatings, setSelectedRatings] = useState([]);
   const [content, setContent] = useState("");
 
   const handleMouseEnter = (index) => {
     //console.log(index);
     //Index is zero based, so we need to increase by 1
-    const ratings = new Array(index + 1).fill(index);
+    const ratings = createArray(index + 1);
+    // const ratings = new Array(index + 1).fill(index);
     // console.log(ratings);
     setSelectedRatings([...ratings]);
   };
@@ -29,6 +34,14 @@ const RatingForm = ({ onSubmit, busy }) => {
 
     onSubmit(data);
   };
+
+  //For Edit
+  useEffect(() => {
+    if (initialState) {
+      setContent(initialState.content);
+      setSelectedRatings(createArray(initialState.rating));
+    }
+  }, [initialState]);
   return (
     <div>
       <div className="p-5 bg-white dark:bg-primary rounded space-y-3">
