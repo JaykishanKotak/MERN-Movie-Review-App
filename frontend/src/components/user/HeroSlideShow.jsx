@@ -22,8 +22,8 @@ const HeroSlideShow = () => {
 
   const slideRef = useRef();
   const clonedSlideRef = useRef();
-  const fetchLatestUploads = async () => {
-    const { error, movies } = await getLatestUploads();
+  const fetchLatestUploads = async (signal) => {
+    const { error, movies } = await getLatestUploads(signal);
     if (error) return updateNotification();
 
     setSlides([...movies]);
@@ -121,7 +121,8 @@ const HeroSlideShow = () => {
     if (visibility === "visible") setVisible(true);
   };
   useEffect(() => {
-    fetchLatestUploads();
+    const ac = new AbortController();
+    fetchLatestUploads(ac.signal);
     //To stop animation when change or close tab
     document.addEventListener("visibilitychange", handleOnVisibilityChange);
     //Clean up fun -> runs when unmounts the dom
@@ -132,6 +133,7 @@ const HeroSlideShow = () => {
         "visibilitychange",
         handleOnVisibilityChange
       );
+      ac.abort();
     };
   }, []);
 

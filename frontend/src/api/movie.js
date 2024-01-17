@@ -121,13 +121,13 @@ export const searchMovieForAdmin = async (title) => {
   }
 };
 
-export const getTopRatedMovies = async (type) => {
+export const getTopRatedMovies = async (type, signal) => {
   try {
     let endPoint = "/movie/top-rated";
     if (type) {
       endPoint = endPoint + "?type=" + type;
     }
-    const { data } = await client.get(endPoint);
+    const { data } = await client.get(endPoint, { signal });
 
     return data;
   } catch (error) {
@@ -135,9 +135,9 @@ export const getTopRatedMovies = async (type) => {
   }
 };
 
-export const getLatestUploads = async (type) => {
+export const getLatestUploads = async (signal) => {
   try {
-    const { data } = await client.get("/movie/latest-uploads");
+    const { data } = await client.get("/movie/latest-uploads", { signal });
 
     return data;
   } catch (error) {

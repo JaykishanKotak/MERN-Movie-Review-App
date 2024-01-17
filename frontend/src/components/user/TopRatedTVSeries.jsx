@@ -6,14 +6,18 @@ import { getTopRatedMovies } from "../../api/movie";
 const TopRatedTVSeries = () => {
   const [movies, setMovies] = useState([]);
   const { updateNotification } = useNotification();
-  const fetchMovies = async () => {
-    const { movies, error } = await getTopRatedMovies("TV Series");
+  const fetchMovies = async (signal) => {
+    const { movies, error } = await getTopRatedMovies("TV Series", signal);
     if (error) return updateNotification("error", error);
     setMovies([...movies]);
   };
 
   useEffect(() => {
-    fetchMovies();
+    const ac = new AbortController();
+    fetchMovies(ac.signal);
+    return () => {
+      ac.abort();
+    };
   }, []);
 
   return <MovieList movies={movies} title="Viewer's Choice (TV Series)" />;
